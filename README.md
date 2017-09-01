@@ -1,7 +1,8 @@
 USAGE
 =====
 
-Right now it only can process one solidity source file at time.
+Right now it only can process one solidity source file at time
+and only works with `node_modules`.
 
 Simple usage:
 
