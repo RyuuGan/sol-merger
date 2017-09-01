@@ -20,9 +20,13 @@
     "solidity-merger"
   ],
   "author": "Valery Aligorsky <stdammit@gmail.com>",
-  "license": "ISC",
+  "license": "BSD 2-Clause License",
   "dependencies": {
     "bluebird": "^3.5.0",
     "cli-color": "^1.2.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RyuuGan/sol-merger.git"
   }
 }
