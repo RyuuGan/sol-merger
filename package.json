@@ -20,7 +20,7 @@
     "solidity-merger"
   ],
   "author": "Valery Aligorsky <stdammit@gmail.com>",
-  "license": "BSD 2-Clause License",
+  "license": "BSD-2-Clause",
   "dependencies": {
     "bluebird": "^3.5.0",
     "cli-color": "^1.2.0"
