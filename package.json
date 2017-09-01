@@ -1,0 +1,28 @@
+{
+  "name": "sol-merger",
+  "version": "0.0.1",
+  "description": "Merges all import files into single file.",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "sol-merger": "./bin/mergeFile.js"
+  },
+  "keywords": [
+    "smartcontract",
+    "sol",
+    "merger",
+    "solidity",
+    "solidity-merger"
+  ],
+  "author": "Valery Aligorsky <stdammit@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "bluebird": "^3.5.0",
+    "cli-color": "^1.2.0"
+  }
+}
