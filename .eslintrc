@@ -1,0 +1,41 @@
+{
+  "parserOptions": {
+    "ecmaVersion": 8
+  },
+  "env": {
+    "node": true,
+    "browser": false
+  },
+  "rules": {
+    "no-mixed-requires": 0,
+    "curly": 0,
+    "camelcase": 2,
+    "no-process-exit": 0,
+    "eqeqeq": 0,
+    "no-shadow": 0,
+    "no-underscore-dangle": 0,
+    "no-use-before-define": [2, "nofunc"],
+    "guard-for-in": 2,
+    "no-else-return": 2,
+    "no-floating-decimal": 2,
+    "no-param-reassign": 0,
+    "no-self-compare": 2,
+    "no-undefined": 2,
+    "no-console": 2,
+    "no-loop-func": 0,
+    "brace-style": [2, "1tbs", { "allowSingleLine": true }],
+    "indent": [2, 2,  { "SwitchCase": 1 } ],
+    "quotes": [2, "single"],
+    "space-before-function-paren": [2, {
+      "anonymous": "always",
+      "named": "never"
+    }],
+    "no-multiple-empty-lines": [2, {
+      "max": 2
+    }],
+    "max-nested-callbacks": [2, 4],
+    "no-lonely-if": 2,
+    "space-in-parens": [2, "never"],
+    "no-empty": 0
+  }
+}

@@ -4,12 +4,13 @@ let path = require('path')
   , Merger = require('../lib/merger')
   , Utils = require('../lib/utils')
   , colors =  require('cli-color')
-  , done = require('../utils/done');
+  , done = require('../utils/done')
+  , error = require('debug')('sol-merger:error');
 
 let contract = process.argv[2];
 
 if (!contract) {
-  console.error(colors.red('Please specify input solidity contract.'));
+  error(colors.red('Please specify input solidity contract.'));
   done();
 }
 

@@ -7,7 +7,8 @@
     "lib": "lib"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha",
+    "eslint": "eslint ."
   },
   "bin": {
     "sol-merger": "./bin/mergeFile.js"
@@ -23,10 +24,20 @@
   "license": "BSD-2-Clause",
   "dependencies": {
     "bluebird": "^3.5.0",
-    "cli-color": "^1.2.0"
+    "cli-color": "^1.2.0",
+    "debug": "^3.0.1"
   },
+  "pre-commit": [
+    "eslint"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/RyuuGan/sol-merger.git"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "eslint": "^4.6.1",
+    "mocha": "^3.5.2",
+    "zeppelin-solidity": "^1.2.0"
   }
 }
