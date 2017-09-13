@@ -1,5 +1,7 @@
-USAGE
-=====
+### Build status
+[![Build status](https://travis-ci.org/RyuuGan/sol-merger.svg?branch=master)](https://travis-ci.org/RyuuGan/sol-merger)
+
+### USAGE
 
 Right now it only works with solidity files that are in `node_modules`
 or relative to your solidity file.
