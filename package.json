@@ -11,7 +11,7 @@
     "eslint": "eslint ."
   },
   "bin": {
-    "sol-merger": "./bin/mergeFile.js"
+    "sol-merger": "./bin/sol-merger.js"
   },
   "keywords": [
     "smartcontract",
@@ -25,7 +25,10 @@
   "dependencies": {
     "bluebird": "^3.5.0",
     "cli-color": "^1.2.0",
-    "debug": "^3.0.1"
+    "commander": "^2.11.0",
+    "debug": "^3.0.1",
+    "fs-extra": "^4.0.2",
+    "glob": "^7.1.2"
   },
   "pre-commit": [
     "eslint"
