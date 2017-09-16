@@ -11,6 +11,6 @@ global.assertWithFile = (contents, filename) => {
   let fileContents = fs.readFileSync(
     path.join(__dirname, 'compiled', filename), { encoding: 'utf-8' });
 
-  assert.equal(contents, fileContents, 'Contents must match with compiled version');
+  assert.equal(contents.trim(), fileContents.trim(), 'Contents must match with compiled version');
 
 };
