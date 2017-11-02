@@ -1,4 +1,4 @@
-#! /usr/local/bin/node
+#!/usr/bin/env node
 
 let path = require('path')
   , glob = require('glob')
