@@ -40,4 +40,6 @@ sol-merger -h
 sol-merger --help
 ```
 
+You may need to invoke the command using `npm run-script sol-merger ...`.
+
 More info about `glob` available at [node-glob repository](https://github.com/isaacs/node-glob)
