@@ -22,6 +22,8 @@ Then add following line to your `package.json`.
 }
 ```
 
+This will allow you to use `npm run-script build-contracts` in your project directory.
+
 Note that contracts glob should be surrounded with `"`
 
 If no output file specified then output file will be created at the same
@@ -32,6 +34,7 @@ change this behaviour by specifying `--append` option:
 sol-merger --append _me "./contracts/*.sol"
 sol-merger -a _me "./contracts/*.sol"
 ```
+You may need to use `npm run` to invoke the program standalone, as in `npm run sol-merger`.
 
 You can also get help via `--help` command
 
@@ -39,7 +42,5 @@ You can also get help via `--help` command
 sol-merger -h
 sol-merger --help
 ```
-
-You may need to invoke the command using `npm run-script sol-merger ...`.
 
 More info about `glob` available at [node-glob repository](https://github.com/isaacs/node-glob)
