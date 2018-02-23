@@ -17,12 +17,12 @@ Then add following line to your `package.json`.
 ```
 {
   "scripts": {
-    "build-contracts": "sol-merger './contracts/*.sol' ./build"
+    "build-contracts": "sol-merger \"./contracts/*.sol\" ./build"
   },
 }
 ```
 
-This will allow you to use `npm run-script build-contracts` in your project directory.
+This will allow you to use `npm run build-contracts` in your project directory.
 
 Note that contracts glob should be surrounded with `"`
 
