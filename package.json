@@ -44,6 +44,6 @@
     "chai": "^4.1.2",
     "eslint": "^4.6.1",
     "mocha": "^5.2.0",
-    "zeppelin-solidity": "^1.2.0"
+    "zeppelin-solidity": "^1.12.0"
   }
 }
