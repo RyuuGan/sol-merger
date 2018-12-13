@@ -26,11 +26,11 @@
   "author": "Valery Aligorsky <stdammit@gmail.com>",
   "license": "BSD-2-Clause",
   "dependencies": {
-    "bluebird": "^3.5.0",
-    "cli-color": "^1.2.0",
-    "commander": "^2.11.0",
-    "debug": "^3.0.1",
-    "fs-extra": "^4.0.2",
+    "bluebird": "^3.5.3",
+    "cli-color": "^1.4.0",
+    "commander": "^2.19.0",
+    "debug": "^3.2.6",
+    "fs-extra": "^7.0.1",
     "glob": "^7.1.2"
   },
   "pre-commit": [
@@ -43,7 +43,7 @@
   "devDependencies": {
     "chai": "^4.1.2",
     "eslint": "^4.6.1",
-    "mocha": "^3.5.2",
+    "mocha": "^5.2.0",
     "zeppelin-solidity": "^1.2.0"
   }
 }

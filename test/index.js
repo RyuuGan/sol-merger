@@ -27,7 +27,6 @@ describe('Solidity Merger', () => {
     let result = await merger.processFile(file, true);
 
     assertWithFile(result, 'MultiImports.sol');
-
   });
 
 });
