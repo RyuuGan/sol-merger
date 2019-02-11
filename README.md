@@ -44,3 +44,9 @@ sol-merger --help
 ```
 
 More info about `glob` available at [node-glob repository](https://github.com/isaacs/node-glob)
+
+# Plugin for VSCode
+
+I created a plugin for `VSCode` so you can use it instead of `sol-merger`: [Solidity Contracts Merger](https://marketplace.visualstudio.com/items?itemName=RyuuGan.sol-merger-vscode). 
+
+Hope you will like it.
