@@ -4,7 +4,7 @@
 ### Quick Usage
 
 ```javascript
-const merge = require('sol-merger');
+const { merge } = require('sol-merger');
 
 // Get the merged code as a string
 const mergedCode = await merge("./contracts/MyContract.sol");
