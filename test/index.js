@@ -23,7 +23,7 @@ describe('Solidity Merger', () => {
 
   it('should import relative files using merge', async () => {
     let file = path.join(__dirname, '/contracts/LocalImports.sol');
-    let result = merge(file);
+    let result = await merge(file);
     assertWithFile(result, 'LocalImports.sol');
   });
 
