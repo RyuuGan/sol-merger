@@ -1,6 +1,9 @@
 let Merger = require('./lib/merger');
 
-let merge = (file) => {
+const merge = async (file) => {
+  const merger = new Merger({ delimeter: '\n\n' });
+  return merger.processFile(file, true);
+}
     return new Promise(async (resolve, reject) => {
         let merger = new Merger({ delimeter: '\n\n' });
         let result;
