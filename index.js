@@ -1,6 +1,6 @@
 let Merger = require('./lib/merger');
 
-let flatten = (file) => {
+let merge = (file) => {
     return new Promise(async (resolve, reject) => {
         let merger = new Merger({ delimeter: '\n\n' });
         let result;
@@ -13,4 +13,4 @@ let flatten = (file) => {
     });
 };
 
-module.exports = flatten;
+module.exports = merge;
