@@ -1,7 +1,8 @@
 'use strict';
 
 const Merger = require('../lib/merger')
-  , path = require('path');
+  , path = require('path')
+  , { merge } = require('../index');
 require('./_config');
 
 describe('Solidity Merger', () => {
@@ -17,6 +18,12 @@ describe('Solidity Merger', () => {
     let file = path.join(__dirname, '/contracts/LocalImports.sol');
 
     let result = await merger.processFile(file, true);
+    assertWithFile(result, 'LocalImports.sol');
+  });
+
+  it('should import relative files using merge', async () => {
+    let file = path.join(__dirname, '/contracts/LocalImports.sol');
+    let result = await merge(file);
     assertWithFile(result, 'LocalImports.sol');
   });
 

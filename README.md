@@ -1,7 +1,18 @@
 ### Build status
 [![Build status](https://travis-ci.org/RyuuGan/sol-merger.svg?branch=master)](https://travis-ci.org/RyuuGan/sol-merger)
 
-### USAGE
+### Quick Usage
+
+```javascript
+const { merge } = require('sol-merger');
+
+// Get the merged code as a string
+const mergedCode = await merge("./contracts/MyContract.sol");
+// Print it out or write it to a file etc.
+console.log(mergedCode);
+```
+
+### CLI Usage
 
 Right now it only works with solidity files that are in `node_modules`
 or relative to your solidity file.
