@@ -1,6 +1,6 @@
 const FileAnalyzer = require('../lib/fileAnalyzer');
 
-describe.only('FileAnalyzer', () => {
+describe('FileAnalyzer', () => {
   describe('analyzeImport', () => {
     const fileAnalyzer = new FileAnalyzer('./contracts/LocalImports.sol');
 

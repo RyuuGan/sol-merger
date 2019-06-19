@@ -13,7 +13,7 @@ describe('Solidity Merger', () => {
       '\n\n',
       'Delimeter must be set to 2 new lines'
     );
-    assert.isArray(merger.processedFiles, 'Must be initialized as array');
+    assert.isArray(merger.registeredImports, 'Must be initialized as array');
   });
 
   it('should import relative files', async () => {

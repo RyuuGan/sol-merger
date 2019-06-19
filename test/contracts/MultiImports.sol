@@ -2,10 +2,6 @@ pragma solidity ^0.4.15;
 
 import "zeppelin-solidity/contracts/token/ERC20/StandardToken.sol";
 
-/**
- * @title ERC20 Token
- * @dev Simpler ERC20 token example.
- */
 contract MyToken is StandardToken {
   string public constant name = "My Token";
   string public constant symbol = "MYT";

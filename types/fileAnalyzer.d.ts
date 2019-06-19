@@ -11,6 +11,8 @@ declare class FileAnalyzer {
 }
 
 interface FileAnalyzerResult {
+  filename: string;
+  contents: string;
   imports: FileAnalyzerImportsResult[];
   exports: FileAnalyzerExportsResult[];
 }
