@@ -1,4 +1,5 @@
-const FileAnalyzer = require('../lib/fileAnalyzer');
+import { assert } from 'chai';
+import { FileAnalyzer } from '../lib/fileAnalyzer';
 
 describe('FileAnalyzer', () => {
   describe('analyzeImport', () => {

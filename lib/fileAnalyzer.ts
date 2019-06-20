@@ -1,31 +1,28 @@
-const fs = require('fs-extra'),
-  stripComments = require('strip-json-comments');
+import fs from 'fs-extra';
+import stripComments from 'strip-json-comments';
 
-class FileAnalyzer {
+export class FileAnalyzer {
+  filename: string;
   /**
    * Builds the function body depending on the export
-   * @param {FileAnalyzerExportsResult} e
-   * @param {string} [newName]
-   *
-   * @returns {string}
    */
-  static buildExportBody(e, newName) {
+  static buildExportBody(
+    e: FileAnalyzerExportsResult,
+    newName?: string
+  ): string {
     return `${e.type} ${newName || e.name} ${e.is}${e.body}`;
   }
   /**
    * Filename to read to get contract data
-   * @param {string} filename
    */
-  constructor(filename) {
+  constructor(filename: string) {
     this.filename = filename;
   }
 
   /**
    * Returns imports and exports of the processing file
-   *
-   * @returns {FileAnalyzerResult}
    */
-  async analyze() {
+  async analyze(): Promise<FileAnalyzerResult> {
     await fs.stat(this.filename);
     let contents = await fs.readFile(this.filename, { encoding: 'utf-8' });
     contents = stripComments(contents, { whitespace: false });
@@ -41,10 +38,8 @@ class FileAnalyzer {
 
   /**
    * Analyzes all the imports of the file
-   * @param {string} contents
-   *
    */
-  analyzeImports(contents) {
+  analyzeImports(contents: string): FileAnalyzerImportsResult[] {
     const imports = [];
     const importRegex = /import .+?;/g;
     let group;
@@ -63,9 +58,8 @@ class FileAnalyzer {
    * 2. Named imports if any
    * 3. Extract filename from import
    *
-   * @param {string} importStatement
    */
-  analyzeImport(importStatement) {
+  analyzeImport(importStatement: string): FileAnalyzerImportsResult {
     const fileRegex = /['"](.+?)['"]/;
     const group = fileRegex.exec(importStatement);
     if (!group) {
@@ -112,12 +106,11 @@ class FileAnalyzer {
    * 2. Get the body of the export
    * 3. Get inheritance of the specifier
    *
-   * @param {string} contents
    */
-  analyzeExports(contents) {
+  analyzeExports(contents: string): FileAnalyzerExportsResult[] {
     const exportRegex = /(contract|library|interface)\s+([a-zA-Z_$][a-zA-Z_$0-9]*)\s*([\s\S]*?)\{/g;
     const results = [];
-    let group;
+    let group: RegExpExecArray;
     while ((group = exportRegex.exec(contents))) {
       const [, type, name, is] = group;
       const body = this.findBodyEnd(
@@ -135,12 +128,11 @@ class FileAnalyzer {
   }
 
   /**
-   *
-   * @param {string} contents file contents
-   * @param {number} start start of the body, start must be pointing to "{"
-   * @returns {string} body
+   * @param contents file contents
+   * @param start start of the body, start must be pointing to "{"
+   * @returns body of the export
    */
-  findBodyEnd(contents, start) {
+  findBodyEnd(contents: string, start: number): string {
     let deep = 1;
     let idx = start + 1;
     let inString = false;
@@ -184,4 +176,25 @@ class FileAnalyzer {
   }
 }
 
-module.exports = FileAnalyzer;
+export interface FileAnalyzerResult {
+  filename: string;
+  contents: string;
+  imports: FileAnalyzerImportsResult[];
+  exports: FileAnalyzerExportsResult[];
+}
+
+export interface FileAnalyzerImportsResult {
+  file: string;
+  globalRenameImport: string | null;
+  namedImports: Array<{
+    name: string;
+    as: string;
+  }> | null;
+}
+
+export interface FileAnalyzerExportsResult {
+  type: 'contract' | 'library' | 'interface';
+  name: string;
+  is: string;
+  body: string;
+}

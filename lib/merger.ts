@@ -1,52 +1,47 @@
-'use strict';
+import path from 'path';
+import { exec } from 'child_process';
+import { Utils } from './utils';
+import Debug from 'debug';
+import {
+  FileAnalyzer,
+  FileAnalyzerImportsResult,
+  FileAnalyzerResult,
+} from './fileAnalyzer';
 
-let path = require('path'),
-  exec = require('child_process').exec,
-  fs = require('fs-extra'),
-  Utils = require('./utils'),
-  error = require('debug')('sol-merger:error'),
-  log = require('debug')('sol-merge:log'),
-  FileAnalyzer = require('./fileAnalyzer');
+const error = Debug('sol-merger:error');
+const log = Debug('sol-merge:log');
 
-class Merger {
-  constructor(options) {
-    if (!options) options = {};
+export class Merger {
+  delimeter: string;
+  registeredImports: RegistredImport[];
+  nodeModulesRoot: string;
+
+  constructor (options: SolMergerOptions = {}) {
     const { delimeter } = options;
 
-    /**
-     * @type string;
-     */
     this.delimeter = delimeter || '\n\n';
-
-    /**
-     * @type {RegistredImport[]}
-     */
     this.registeredImports = [];
-
-    /**
-     * @type string;
-     */
     this.nodeModulesRoot = null;
   }
 
-  getPragmaRegex() {
+  getPragmaRegex () {
     return /(pragma solidity (.+?);)/g;
   }
 
-  getImportRegex() {
+  getImportRegex () {
     return /import.+?;/g;
   }
 
-  getPragma(contents) {
-    let group = this.getPragmaRegex().exec(contents);
+  getPragma (contents: string) {
+    const group = this.getPragmaRegex().exec(contents);
     return group && group[1];
   }
 
-  stripPragma(contents) {
+  stripPragma (contents: string) {
     return contents.replace(this.getPragmaRegex(), '').trim();
   }
 
-  isImported(filename, name, as) {
+  isImported (filename: string, name: string, as: string | null) {
     return (
       this.registeredImports.find(
         (ri) => ri.file === filename && ri.name === name && ri.as === as
@@ -54,13 +49,11 @@ class Merger {
     );
   }
 
-  /**
-   * Processes file
-   * @param {string} file File path to process
-   * @param {boolean} isRoot Is this file root
-   * @param {FileAnalyzerImportsResult} parentImport
-   */
-  async processFile(file, isRoot, parentImport) {
+  async processFile (
+    file: string,
+    isRoot: boolean,
+    parentImport?: FileAnalyzerImportsResult
+  ) {
     if (isRoot) {
       this.registeredImports = [];
       this.nodeModulesRoot = await this.getNodeModulesPath(file);
@@ -88,14 +81,8 @@ class Merger {
     return result.trimRight();
   }
 
-  /**
-   *
-   * @param {FileAnalyzerResult} analyzedFile
-   *
-   * @returns {string[]}
-   */
-  async processImports(analyzedFile) {
-    let result = [];
+  async processImports (analyzedFile: FileAnalyzerResult): Promise<string[]> {
+    const result = [];
     for (const i of analyzedFile.imports) {
       let filePath = Utils.isRelative(i.file)
         ? path.join(path.dirname(analyzedFile.filename), i.file)
@@ -111,14 +98,10 @@ class Merger {
     return result;
   }
 
-  /**
-   *
-   * @param {FileAnalyzerResult} analyzedFile
-   * @param {FileAnalyzerImportsResult} [parentImport]
-   *
-   * @returns {string[]}
-   */
-  async processExports(analyzedFile, parentImport) {
+  async processExports (
+    analyzedFile: FileAnalyzerResult,
+    parentImport?: FileAnalyzerImportsResult
+  ): Promise<string[]> {
     const isAllImport =
       !parentImport ||
       (parentImport.globalRenameImport === null &&
@@ -130,7 +113,7 @@ class Merger {
         (namedImport) => namedImport.name === exportName
       );
 
-    const result = [];
+    const result: string[] = [];
 
     analyzedFile.exports.forEach((e) => {
       const beImported = shouldBeImported(e.name);
@@ -157,19 +140,15 @@ class Merger {
     return result;
   }
 
-  /**
-   * Registers import that is processed
-   * @param {RegistredImport} i
-   */
-  registerImport(i) {
+  registerImport (i: RegistredImport): void {
     this.registeredImports.push(i);
   }
 
-  stripImports(contents) {
+  stripImports (contents: string): string {
     return contents.replace(this.getImportRegex(), '').trim();
   }
 
-  async getNodeModulesPath(file) {
+  async getNodeModulesPath (file: string): Promise<string> {
     return new Promise((resolve, reject) => {
       exec('npm root', { cwd: path.dirname(file) }, (err, stdout) => {
         if (err) {
@@ -184,4 +163,12 @@ class Merger {
   }
 }
 
-module.exports = Merger;
+export interface SolMergerOptions {
+  delimeter?: string;
+}
+
+export interface RegistredImport {
+  file: string;
+  name: string;
+  as: string;
+}

@@ -11,6 +11,7 @@
   },
   "scripts": {
     "test": "mocha",
+    "build": "tsc -p tsconfig.app.json",
     "eslint": "eslint ."
   },
   "bin": {
@@ -41,9 +42,17 @@
     "url": "https://github.com/RyuuGan/sol-merger.git"
   },
   "devDependencies": {
+    "@types/chai": "^4.1.7",
+    "@types/debug": "^4.1.4",
+    "@types/fs-extra": "^7.0.0",
+    "@types/mocha": "^5.2.7",
+    "@types/strip-json-comments": "0.0.30",
     "chai": "^4.2.0",
-    "eslint": "^5.16.0",
     "mocha": "^5.2.0",
+    "ts-node": "^8.3.0",
+    "tslib": "^1.10.0",
+    "tslint": "^5.17.0",
+    "typescript": "^3.5.2",
     "zeppelin-solidity": "^1.12.0"
   }
 }

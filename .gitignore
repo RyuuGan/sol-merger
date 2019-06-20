@@ -15,6 +15,7 @@ desktop.ini
 nohup.out
 pid/
 *.pid
+dist/
 
 # NodeJS
 
