@@ -7,10 +7,23 @@ export class FileAnalyzer {
    * Builds the function body depending on the export
    */
   static buildExportBody(
+    analyzedFile: FileAnalyzerResult,
     e: FileAnalyzerExportsResult,
-    newName?: string
+    newName?: string,
   ): string {
-    return `${e.type} ${newName || e.name} ${e.is}${e.body}`;
+    let is = e.is;
+    if (is) {
+      analyzedFile.imports.forEach((i) => {
+        if (i.namedImports) {
+          i.namedImports.forEach((ni) => {
+            if (ni.as) {
+              is = is.replace(ni.name, ni.as);
+            }
+          });
+        }
+      });
+    }
+    return `${e.type} ${newName || e.name} ${is}${e.body}`;
   }
   /**
    * Filename to read to get contract data
@@ -115,7 +128,7 @@ export class FileAnalyzer {
       const [, type, name, is] = group;
       const body = this.findBodyEnd(
         contents,
-        group.index + group[0].length - 1
+        group.index + group[0].length - 1,
       );
       results.push({
         type,
@@ -169,7 +182,7 @@ export class FileAnalyzer {
     }
     if (deep !== 0) {
       throw new Error(
-        'Export is not correct. Has more opening brackets then closing.'
+        'Export is not correct. Has more opening brackets then closing.',
       );
     }
     return contents.substring(start, idx);

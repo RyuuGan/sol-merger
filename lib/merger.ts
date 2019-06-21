@@ -16,7 +16,7 @@ export class Merger {
   registeredImports: RegistredImport[];
   nodeModulesRoot: string;
 
-  constructor (options: SolMergerOptions = {}) {
+  constructor(options: SolMergerOptions = {}) {
     const { delimeter } = options;
 
     this.delimeter = delimeter || '\n\n';
@@ -24,35 +24,35 @@ export class Merger {
     this.nodeModulesRoot = null;
   }
 
-  getPragmaRegex () {
+  getPragmaRegex() {
     return /(pragma solidity (.+?);)/g;
   }
 
-  getImportRegex () {
+  getImportRegex() {
     return /import.+?;/g;
   }
 
-  getPragma (contents: string) {
+  getPragma(contents: string) {
     const group = this.getPragmaRegex().exec(contents);
     return group && group[1];
   }
 
-  stripPragma (contents: string) {
+  stripPragma(contents: string) {
     return contents.replace(this.getPragmaRegex(), '').trim();
   }
 
-  isImported (filename: string, name: string, as: string | null) {
+  isImported(filename: string, name: string, as: string | null) {
     return (
       this.registeredImports.find(
-        (ri) => ri.file === filename && ri.name === name && ri.as === as
+        (ri) => ri.file === filename && ri.name === name && ri.as === as,
       ) !== undefined // eslint-disable-line
     );
   }
 
-  async processFile (
+  async processFile(
     file: string,
     isRoot: boolean,
-    parentImport?: FileAnalyzerImportsResult
+    parentImport?: FileAnalyzerImportsResult,
   ) {
     if (isRoot) {
       this.registeredImports = [];
@@ -73,7 +73,7 @@ export class Merger {
       result += i + this.delimeter;
     }
 
-    const exports = await this.processExports(analyzedFile);
+    const exports = await this.processExports(analyzedFile, parentImport);
     for (const e of exports) {
       result += e + this.delimeter;
     }
@@ -81,7 +81,7 @@ export class Merger {
     return result.trimRight();
   }
 
-  async processImports (analyzedFile: FileAnalyzerResult): Promise<string[]> {
+  async processImports(analyzedFile: FileAnalyzerResult): Promise<string[]> {
     const result = [];
     for (const i of analyzedFile.imports) {
       let filePath = Utils.isRelative(i.file)
@@ -98,19 +98,19 @@ export class Merger {
     return result;
   }
 
-  async processExports (
+  async processExports(
     analyzedFile: FileAnalyzerResult,
-    parentImport?: FileAnalyzerImportsResult
+    parentImport?: FileAnalyzerImportsResult,
   ): Promise<string[]> {
     const isAllImport =
       !parentImport ||
       (parentImport.globalRenameImport === null &&
         parentImport.namedImports === null);
 
-    const shouldBeImported = (exportName) =>
+    const shouldBeImported = (exportName: string) =>
       isAllImport ||
       parentImport.namedImports.find(
-        (namedImport) => namedImport.name === exportName
+        (namedImport) => namedImport.name === exportName,
       );
 
     const result: string[] = [];
@@ -126,8 +126,8 @@ export class Merger {
         log('%s %s %s', '⚠', e.name, analyzedFile.filename);
         return;
       }
-      const body = FileAnalyzer.buildExportBody(e, as);
       if (beImported) {
+        const body = FileAnalyzer.buildExportBody(analyzedFile, e, as);
         result.push(body);
         this.registerImport({
           as: as,
@@ -140,20 +140,20 @@ export class Merger {
     return result;
   }
 
-  registerImport (i: RegistredImport): void {
+  registerImport(i: RegistredImport): void {
     this.registeredImports.push(i);
   }
 
-  stripImports (contents: string): string {
+  stripImports(contents: string): string {
     return contents.replace(this.getImportRegex(), '').trim();
   }
 
-  async getNodeModulesPath (file: string): Promise<string> {
+  async getNodeModulesPath(file: string): Promise<string> {
     return new Promise((resolve, reject) => {
       exec('npm root', { cwd: path.dirname(file) }, (err, stdout) => {
         if (err) {
           error(
-            'Unable to find npm root directory. Make sure contract is inside npm package.'
+            'Unable to find npm root directory. Make sure contract is inside npm package.',
           );
           return reject(err);
         }

@@ -1,6 +1,6 @@
 {
   "rules": {
-    "space-before-function-paren": true,
+    "trailing-comma": true,
     "arrow-return-shorthand": true,
     "callable-types": true,
     "class-name": true,
