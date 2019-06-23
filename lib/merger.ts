@@ -6,6 +6,8 @@ import {
   FileAnalyzer,
   FileAnalyzerImportsResult,
   FileAnalyzerResult,
+  FileAnalyzerNamedImportResult,
+  FileAnalyzerExportsResult,
 } from './fileAnalyzer';
 
 const error = Debug('sol-merger:error');
@@ -102,46 +104,80 @@ export class Merger {
     analyzedFile: FileAnalyzerResult,
     parentImport?: FileAnalyzerImportsResult,
   ): Promise<string[]> {
-    const isAllImport =
-      !parentImport ||
-      (parentImport.globalRenameImport === null &&
-        parentImport.namedImports === null);
+    const isAllImport = Utils.isAllImport(parentImport);
 
-    const shouldBeImported = (exportName: string) =>
-      isAllImport ||
-      parentImport.namedImports.find(
-        (namedImport) => namedImport.name === exportName,
+    const isRenameGlobalImport = Utils.isRenameGlobalImport(parentImport);
+
+    const shouldBeImported = (exportName: string) => {
+      return (
+        isAllImport ||
+        isRenameGlobalImport ||
+        parentImport.namedImports.find(
+          (namedImport) => namedImport.name === exportName,
+        )
       );
+    };
 
     const result: string[] = [];
 
     analyzedFile.exports.forEach((e) => {
-      const beImported = shouldBeImported(e.name);
-      const as =
-        typeof beImported === 'object' && beImported !== null
-          ? beImported.as
-          : null;
-      const isImported = this.isImported(analyzedFile.filename, e.name, as);
-      if (isImported) {
-        log('%s %s %s', '⚠', e.name, analyzedFile.filename);
-        return;
-      }
-      if (beImported) {
-        const body = FileAnalyzer.buildExportBody(analyzedFile, e, as);
-        result.push(body);
-        this.registerImport({
-          as: as,
-          file: analyzedFile.filename,
-          name: e.name,
-        });
-        return;
-      }
+      this.processExport(
+        analyzedFile,
+        parentImport,
+        e,
+        shouldBeImported,
+        isRenameGlobalImport,
+        result,
+      );
     });
     return result;
   }
 
+  processExport(
+    analyzedFile: FileAnalyzerResult,
+    parentImport: FileAnalyzerImportsResult | undefined,
+    e: FileAnalyzerExportsResult,
+    shouldBeImported: (e: string) => boolean | FileAnalyzerNamedImportResult,
+    isRenameGlobalImport: boolean,
+    result: string[],
+  ): void {
+    const beImported = shouldBeImported(e.name);
+    let rename =
+      typeof beImported === 'object' && beImported !== null
+        ? beImported.as
+        : null;
+    const isImported = this.isImported(analyzedFile.filename, e.name, rename);
+    if (isImported) {
+      log('%s %s %s', '⚠', e.name, analyzedFile.filename);
+      return;
+    }
+    if (beImported) {
+      if (isRenameGlobalImport) {
+        rename = `${parentImport.globalRenameImport}$${e.name}`;
+      }
+      const globalRenames = this.getGlobalImports();
+      const body = FileAnalyzer.buildExportBody(
+        analyzedFile,
+        e,
+        rename,
+        globalRenames,
+      );
+      result.push(body);
+      this.registerImport({
+        as: rename,
+        file: analyzedFile.filename,
+        name: e.name,
+        globalRename: parentImport && parentImport.globalRenameImport,
+      });
+    }
+  }
+
   registerImport(i: RegistredImport): void {
     this.registeredImports.push(i);
+  }
+
+  getGlobalImports(): RegistredImport[] {
+    return this.registeredImports.filter((i) => i.globalRename);
   }
 
   stripImports(contents: string): string {
@@ -171,4 +207,5 @@ export interface RegistredImport {
   file: string;
   name: string;
   as: string;
+  globalRename: string;
 }

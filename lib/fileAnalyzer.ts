@@ -1,5 +1,6 @@
 import fs from 'fs-extra';
 import stripComments from 'strip-json-comments';
+import { RegistredImport } from './merger';
 
 export class FileAnalyzer {
   filename: string;
@@ -9,10 +10,17 @@ export class FileAnalyzer {
   static buildExportBody(
     analyzedFile: FileAnalyzerResult,
     e: FileAnalyzerExportsResult,
-    newName?: string,
+    newName: string,
+    globalRenames: RegistredImport[],
   ): string {
     let is = e.is;
     if (is) {
+      globalRenames.forEach((i) => {
+        is = is.replace(
+          `${i.globalRename}.${i.name}`,
+          `${i.globalRename}$${i.name}`,
+        );
+      });
       analyzedFile.imports.forEach((i) => {
         if (i.namedImports) {
           i.namedImports.forEach((ni) => {
@@ -199,10 +207,12 @@ export interface FileAnalyzerResult {
 export interface FileAnalyzerImportsResult {
   file: string;
   globalRenameImport: string | null;
-  namedImports: Array<{
-    name: string;
-    as: string;
-  }> | null;
+  namedImports: FileAnalyzerNamedImportResult[] | null;
+}
+
+export interface FileAnalyzerNamedImportResult {
+  name: string;
+  as: string;
 }
 
 export interface FileAnalyzerExportsResult {

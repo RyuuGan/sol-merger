@@ -26,6 +26,10 @@ describe('Solidity Merger', () => {
     await testFile('RenamedImports');
   });
 
+  it('should allow basic global renamed imports', async () => {
+    await testFile('GlobalRenamedImports');
+  });
+
   it('should not import twice same ', async () => {
     await testFile('MultiImports');
   });
