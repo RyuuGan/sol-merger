@@ -5,7 +5,7 @@
   "main": "./dist/lib/index.js",
   "types": "./dist/lib/index.d.ts",
   "directories": {
-    "dist": "dist"
+    "lib": "dist/lib"
   },
   "files": ["dist/**/*"],
   "engines": {
