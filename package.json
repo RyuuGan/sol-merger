@@ -12,7 +12,8 @@
   "scripts": {
     "test": "mocha",
     "build": "tsc -p tsconfig.app.json",
-    "eslint": "eslint ."
+    "eslint": "eslint .",
+    "changelog": "npx conventional-changelog-cli -p angular -i CHANGELOG.md -s"
   },
   "bin": {
     "sol-merger": "./bin/sol-merger.js"
