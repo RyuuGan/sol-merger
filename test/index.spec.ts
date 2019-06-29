@@ -4,12 +4,12 @@ import { merge, Merger } from '../lib/index';
 import { assertWithFile, testFile } from './utils';
 
 describe('Solidity Merger', () => {
-  it('should set default options', function () {
+  it('should set default options', function() {
     const merger = new Merger();
     assert.equal(
       merger.delimeter,
       '\n\n',
-      'Delimeter must be set to 2 new lines'
+      'Delimeter must be set to 2 new lines',
     );
     assert.isArray(merger.registeredImports, 'Must be initialized as array');
   });
@@ -34,10 +34,17 @@ describe('Solidity Merger', () => {
     await testFile('MultiImports');
   });
 
+  it('should import only selected exports from file', async () => {
+    await testFile('DoubleNamedImports');
+  });
+
+  it('should import only selected exports from file even if it breaks the contract', async () => {
+    await testFile('NamedImportOnlySelectedFailContract');
+  });
+
   it('should import relative files using merge function', async () => {
     const file = path.join(__dirname, '/contracts/LocalImports.sol');
     const result = await merge(file);
     assertWithFile(result, 'LocalImports.sol');
   });
-
 });
