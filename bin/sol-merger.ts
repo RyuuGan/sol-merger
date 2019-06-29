@@ -59,15 +59,15 @@ async function execute(err: Error, files: string[]) {
     console.log(colors.yellow('No files found for merge'));
   }
 
-  let promises = files.map(async (file) => {
-    let merger = new Merger({ delimeter: '\n\n' });
+  const promises = files.map(async (file) => {
+    const merger = new Merger({ delimeter: '\n\n' });
     let result: string;
     result = await merger.processFile(file, true);
     let outputFile: string;
     if (outputDir) {
       outputFile = path.join(outputDir, path.basename(file));
     } else {
-      let extname = path.extname(file);
+      const extname = path.extname(file);
       outputFile = path.join(
         path.dirname(file),
         path.basename(file, extname) + append + extname

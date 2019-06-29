@@ -14,7 +14,7 @@
   "scripts": {
     "test": "mocha",
     "build": "tsc -p tsconfig.app.json",
-    "eslint": "eslint .",
+    "lint": "tslint -p tsconfig.app.json",
     "changelog": "npx conventional-changelog-cli -p angular -i CHANGELOG.md -s"
   },
   "bin": {
@@ -40,7 +40,7 @@
     "strip-json-comments": "^3.0.1"
   },
   "pre-commit": [
-    "eslint"
+    "lint"
   ],
   "repository": {
     "type": "git",
