@@ -32,8 +32,15 @@ describe('Solidity Merger', () => {
     let file = path.join(__dirname, '/contracts/MultiImports.sol');
 
     let result = await merger.processFile(file, true);
-
     assertWithFile(result, 'MultiImports.sol');
   });
 
+  it('should import named contract', async () => {
+    let merger = new Merger({ delimeter: '\n\n' });
+    let file = path.join(__dirname, '/contracts/NamedImports.sol');
+
+    let result = await merger.processFile(file, true);
+
+    assertWithFile(result, 'LocalImports.sol');
+  });
 });
