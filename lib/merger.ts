@@ -27,7 +27,7 @@ export class Merger {
   }
 
   getPragmaRegex() {
-    return /(pragma solidity (.+?);)/g;
+    return /(pragma ([a-zA-Z_$][a-zA-Z_$0-9]*) (.+?);)/g;
   }
 
   getImportRegex() {
@@ -35,8 +35,14 @@ export class Merger {
   }
 
   getPragma(contents: string) {
-    const group = this.getPragmaRegex().exec(contents);
-    return group && group[1];
+    let result = '';
+    const pragmaRegex = this.getPragmaRegex();
+    let group = pragmaRegex.exec(contents);
+    while(group) {
+      result += group[1] + '\n';
+      group = pragmaRegex.exec(contents);
+    }
+    return result;
   }
 
   stripPragma(contents: string) {

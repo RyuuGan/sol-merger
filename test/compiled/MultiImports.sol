@@ -1,5 +1,6 @@
 pragma solidity ^0.4.15;
 
+
 contract ERC20Basic {
   function totalSupply() public view returns (uint256);
   function balanceOf(address _who) public view returns (uint256);
