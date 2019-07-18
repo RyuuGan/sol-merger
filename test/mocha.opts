@@ -1,0 +1,2 @@
+-r ts-node/register
+{test,lib}/**/*.spec.ts

@@ -1,4 +1,6 @@
 pragma solidity ^0.4.11;
+pragma experimental ABIEncoderV2;
+
 
 contract Ownable {
   address public owner;

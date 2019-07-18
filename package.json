@@ -2,48 +2,62 @@
   "name": "sol-merger",
   "version": "0.1.4",
   "description": "Merges all import files into single file.",
-  "main": "index.js",
+  "main": "./dist/lib/index.js",
+  "types": "./dist/lib/index.d.ts",
   "directories": {
-    "lib": "lib"
+    "lib": "dist/lib"
   },
+  "files": ["dist/**/*"],
   "engines": {
     "node": ">=8.0.0"
   },
   "scripts": {
     "test": "mocha",
-    "eslint": "eslint ."
+    "build": "tsc -p tsconfig.app.json",
+    "lint": "tslint -p tsconfig.app.json",
+    "changelog": "npx conventional-changelog-cli -p angular -i CHANGELOG.md -s"
   },
   "bin": {
-    "sol-merger": "./bin/sol-merger.js"
+    "sol-merger": "./dist/bin/sol-merger.js"
   },
   "keywords": [
     "smartcontract",
     "sol",
     "merger",
     "solidity",
-    "solidity-merger"
+    "solidity-merger",
+    "analyzer",
+    "smart contract"
   ],
   "author": "Valery Aligorsky <stdammit@gmail.com>",
   "license": "BSD-2-Clause",
   "dependencies": {
-    "bluebird": "^3.5.3",
     "cli-color": "^1.4.0",
     "commander": "^2.19.0",
-    "debug": "^3.2.6",
-    "fs-extra": "^7.0.1",
-    "glob": "^7.1.2"
+    "debug": "^4.1.1",
+    "fs-extra": "^8.0.1",
+    "glob": "^7.1.2",
+    "strip-json-comments": "^3.0.1"
   },
   "pre-commit": [
-    "eslint"
+    "lint"
   ],
   "repository": {
     "type": "git",
     "url": "https://github.com/RyuuGan/sol-merger.git"
   },
   "devDependencies": {
-    "chai": "^4.1.2",
-    "eslint": "^4.6.1",
-    "mocha": "^5.2.0",
+    "@types/chai": "^4.1.7",
+    "@types/debug": "^4.1.4",
+    "@types/fs-extra": "^7.0.0",
+    "@types/mocha": "^5.2.7",
+    "@types/strip-json-comments": "0.0.30",
+    "chai": "^4.2.0",
+    "mocha": "^6.1.4",
+    "ts-node": "^8.3.0",
+    "tslib": "^1.10.0",
+    "tslint": "^5.17.0",
+    "typescript": "^3.5.2",
     "zeppelin-solidity": "^1.12.0"
   }
 }

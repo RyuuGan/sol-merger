@@ -1,5 +1,5 @@
 pragma solidity ^0.4.11;
-pragma experimental ABIEncoderV2;
+
 
 contract Ownable {
   address public owner;
@@ -19,4 +19,10 @@ contract Ownable {
     }
   }
 
+}
+
+contract MyOwned is Ownable {
+  string public constant name = "My Owned";
+
+  function MyOwned() {}
 }
