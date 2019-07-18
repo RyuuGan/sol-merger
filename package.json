@@ -7,7 +7,9 @@
   "directories": {
     "lib": "dist/lib"
   },
-  "files": ["dist/**/*"],
+  "files": [
+    "dist/**/*"
+  ],
   "engines": {
     "node": ">=8.0.0"
   },
