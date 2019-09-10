@@ -47,4 +47,8 @@ describe('Solidity Merger', () => {
     const result = await merge(file);
     assertWithFile(result, 'LocalImports.sol');
   });
+
+  it('should not find keywords in strings', async () => {
+    await testFile('ReservedWordsInString');
+  });
 });
