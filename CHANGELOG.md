@@ -1,3 +1,12 @@
+## [1.0.1](https://github.com/RyuuGan/sol-merger/compare/v1.0.0...v1.0.1) (2019-09-10)
+
+
+### Bug Fixes
+
+* **FileAnalyzer:** update regex to find top level keywords ([c85a443](https://github.com/RyuuGan/sol-merger/commit/c85a443)), closes [rkalis/truffle-plugin-verify#13](https://github.com/rkalis/truffle-plugin-verify/issues/13)
+
+
+
 # [1.0.0](https://github.com/RyuuGan/sol-merger/compare/v0.1.3...v1.0.0) (2019-07-18)
 
 
