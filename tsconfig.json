@@ -8,7 +8,7 @@
     "esModuleInterop": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "importHelpers": true,
+    "importHelpers": false,
     "target": "es6",
     "module": "commonjs",
     "typeRoots": ["node_modules/@types"],

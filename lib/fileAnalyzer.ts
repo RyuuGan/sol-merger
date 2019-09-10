@@ -129,7 +129,7 @@ export class FileAnalyzer {
    *
    */
   analyzeExports(contents: string): FileAnalyzerExportsResult[] {
-    const exportRegex = /(contract|library|interface)\s+([a-zA-Z_$][a-zA-Z_$0-9]*)\s*([\s\S]*?)\{/g;
+    const exportRegex = /(contract|library|interface)\s+([a-zA-Z_$][a-zA-Z_$0-9]*)\s*([^"]*?)\{/g;
     const results = [];
     let group: RegExpExecArray;
     while ((group = exportRegex.exec(contents))) {
