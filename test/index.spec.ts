@@ -51,4 +51,8 @@ describe('Solidity Merger', () => {
   it('should not find keywords in strings', async () => {
     await testFile('ReservedWordsInString');
   });
+
+  it('should compile extended class with default parameters', async () => {
+    await testFile('DefaultParamentersInheritance')
+  })
 });

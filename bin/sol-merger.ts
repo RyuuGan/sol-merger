@@ -78,6 +78,6 @@ async function execute(err: Error, files: string[]) {
   });
 
   Promise.all(promises)
-    .then(done)
+    .then(() => done())
     .catch(done);
 }

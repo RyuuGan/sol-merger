@@ -129,11 +129,16 @@ export class FileAnalyzer {
    *
    */
   analyzeExports(contents: string): FileAnalyzerExportsResult[] {
-    const exportRegex = /(contract|library|interface)\s+([a-zA-Z_$][a-zA-Z_$0-9]*)\s*([^"]*?)\{/g;
+    const exportRegex = /(contract|library|interface)\s+([a-zA-Z_$][a-zA-Z_$0-9]*)\s*([\s\S]*?)\{/g;
+    const isRegex = /^is\s*[a-zA-Z_$][a-zA-Z_$0-9]*(.[a-zA-Z_$][a-zA-Z_$0-9]*)?(\([\s\S]*?\))?(,\s*?[a-zA-Z_$][a-zA-Z_$0-9]*(.[a-zA-Z_$][a-zA-Z_$0-9]*)?(\([\s\S]*?\))?)?\s*$/;
     const results = [];
     let group: RegExpExecArray;
     while ((group = exportRegex.exec(contents))) {
       const [, type, name, is] = group;
+      // Checking that `is` clause is correct
+      if (is.trim() && !isRegex.test(is.trim())) {
+        continue;
+      }
       const body = this.findBodyEnd(
         contents,
         group.index + group[0].length - 1,
