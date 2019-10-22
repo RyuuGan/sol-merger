@@ -1,10 +1,18 @@
-## [1.1.1](https://github.com/RyuuGan/sol-merger/compare/v1.0.1...v1.1.1) (2019-10-22)
+## [1.1.1](https://github.com/RyuuGan/sol-merger/compare/v1.1.0...v1.1.1) (2019-10-22)
+
+
+### Bug Fixes
+
+* **FileAnalyzer:** update regex for inheriting from more than two contracts ([b09483b](https://github.com/RyuuGan/sol-merger/commit/b09483b6a99d3ac35ec6e37be6cbd43b100ef6f0))
+
+
+
+# [1.1.0](https://github.com/RyuuGan/sol-merger/compare/v1.0.1...v1.1.0) (2019-10-20)
 
 
 ### Bug Fixes
 
 * **command:** update promise all then. ([c570da0](https://github.com/RyuuGan/sol-merger/commit/c570da0cccff1737ad892a2036b22111cea19b48))
-* **FileAnalyzer:** update regex for inheriting from more than two contracts ([b09483b](https://github.com/RyuuGan/sol-merger/commit/b09483b6a99d3ac35ec6e37be6cbd43b100ef6f0))
 
 
 ### Features
