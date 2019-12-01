@@ -8,6 +8,7 @@ const error = Debug('sol-merger:error');
 
 export class FileAnalyzer {
   filename: string;
+  removeComments: boolean;
   /**
    * Builds the function body depending on the export
    */
@@ -40,8 +41,9 @@ export class FileAnalyzer {
   /**
    * Filename to read to get contract data
    */
-  constructor(filename: string) {
+  constructor(filename: string, removeComments: boolean = true) {
     this.filename = filename;
+    this.removeComments = removeComments;
   }
 
   /**
@@ -50,7 +52,9 @@ export class FileAnalyzer {
   async analyze(): Promise<FileAnalyzerResult> {
     await fs.stat(this.filename);
     let contents = await fs.readFile(this.filename, { encoding: 'utf-8' });
-    contents = stripComments(contents, { whitespace: false });
+    if (this.removeComments) {
+      contents = stripComments(contents, { whitespace: false });
+    }
     const imports = this.analyzeImports(contents);
     const exports = this.analyzeExports(contents);
     return {
@@ -157,6 +161,44 @@ export class FileAnalyzer {
       }
       return [];
     }
+  }
+
+  private at(str: string, idx: number, subStr: string) {
+
+    for (let i = 0; i < subStr.length; i++) {
+      if (str.charAt(idx + i) !== subStr.charAt(i)) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  private atComment(str: string, idx: number): boolean {
+    return this.at(str, idx, '//') || this.at(str, idx, '/*');
+  }
+
+  private commentEnding(str: string, idx: number) {
+    if (str.charAt(idx + 1) === '/') {
+      return '\n';
+    }
+    return '*/';
+  }
+
+  trySkipComment(contents: string, idx: number): number {
+    if (!this.atComment(contents, idx)) {
+      return idx;
+    }
+    const commentEnding = this.commentEnding(contents, idx);
+    let endIdx = idx + 2;
+    const length = contents.length;
+    while(!this.at(contents, endIdx, commentEnding) && endIdx < length) {
+      endIdx += 1;
+    }
+    if (this.at(contents, endIdx, commentEnding)) {
+      return endIdx + commentEnding.length;
+    }
+    return endIdx;
   }
 }
 

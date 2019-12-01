@@ -1,2 +1,3 @@
 -r ts-node/register
 {test,lib}/**/*.spec.ts
+--no-timeout

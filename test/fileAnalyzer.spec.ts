@@ -197,4 +197,58 @@ describe('FileAnalyzer', () => {
       assert.deepEqual(exports, []);
     });
   });
+
+  describe('trySkipComment', () => {
+    const fileAnalyzer = new FileAnalyzer('./contracts/LocalImports.sol');
+
+    it('should return the same idx if it is not at comment', () => {
+      const idx = fileAnalyzer.trySkipComment('Some // string', 2);
+
+      assert.equal(idx, 2);
+    });
+
+    it('skip single line comment till the end of contents', () => {
+      const str = '1 //Some string';
+
+      const idx = fileAnalyzer.trySkipComment(str, 2);
+
+      assert.equal(idx, str.length);
+    });
+
+    it('skip single line comment till the end of the line', () => {
+      const str = '1 //Some string\nSome other content';
+      const strWin = '1 //Some string\r\nSome other content';
+      const idx = fileAnalyzer.trySkipComment(str, 2);
+      const idxWin = fileAnalyzer.trySkipComment(strWin, 2);
+      assert.equal(idx, str.indexOf('\n') + 1, 'Linux like file');
+      assert.equal(idxWin, strWin.indexOf('\n') + 1, 'Windows like file');
+
+      assert.equal(str.charAt(idx), 'S');
+      assert.equal(strWin.charAt(idxWin), 'S');
+    });
+
+    it('skip multiline comment till the end of the string', () => {
+      const str = '1 /* Some comment\nSome more contents';
+
+      const idx = fileAnalyzer.trySkipComment(str, 2);
+
+      assert.equal(idx, str.length);
+    });
+
+    it('skip multiline comment till the end if it is single line', () => {
+      const str = '1 /* Some comment */Some more contents';
+
+      const idx = fileAnalyzer.trySkipComment(str, 2);
+
+      assert.equal(idx, str.indexOf('*/') + 2);
+    });
+
+    it('skip multiline comment till the end if it is multi line', () => {
+      const str = '1 /* Some \n\r\n\ncomment */Some more contents';
+
+      const idx = fileAnalyzer.trySkipComment(str, 2);
+
+      assert.equal(idx, str.indexOf('*/') + 2);
+    });
+  });
 });
