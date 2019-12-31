@@ -129,19 +129,21 @@ export class FileAnalyzer {
    *
    */
   analyzeExports(contents: string): FileAnalyzerExportsResult[] {
-    const exportRegex = /(contract|library|interface)\s+([a-zA-Z_$][a-zA-Z_$0-9]*)\s*([\s\S]*?)\{/g;
+    const exportRegex = /(contract|library|interface)\s+([a-zA-Z_$][a-zA-Z_$0-9]*)\s*([\s\S]*?)\{/;
     const isRegex = /^is\s*[a-zA-Z_$][a-zA-Z_$0-9]*(.[a-zA-Z_$][a-zA-Z_$0-9]*)?(\([\s\S]*?\))?(,\s*?[a-zA-Z_$][a-zA-Z_$0-9]*(.[a-zA-Z_$][a-zA-Z_$0-9]*)?(\([\s\S]*?\))?)*\s*$/;
     const results = [];
     let group: RegExpExecArray;
-    while ((group = exportRegex.exec(contents))) {
+    let restContents = contents;
+    while ((group = exportRegex.exec(restContents))) {
       const [, type, name, is] = group;
       // Checking that `is` clause is correct
       if (is.trim() && !isRegex.test(is.trim())) {
         continue;
       }
+      const bodyStart = group.index + group[0].length - 1;
       const body = this.findBodyEnd(
-        contents,
-        group.index + group[0].length - 1,
+        restContents,
+        bodyStart,
       );
       results.push({
         type,
@@ -149,6 +151,8 @@ export class FileAnalyzer {
         is,
         body,
       });
+
+      restContents = restContents.substring(0, group.index) + restContents.substring(bodyStart + body.length);
     }
     return results;
   }

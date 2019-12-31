@@ -55,4 +55,8 @@ describe('Solidity Merger', () => {
   it('should compile extended class with default parameters', async () => {
     await testFile('DefaultParamentersInheritance')
   })
+
+  it('should compile contacts with keywords inside strings and comments', async () => {
+    await testFile('ContactWithKeywordsInsideString')
+  });
 });
