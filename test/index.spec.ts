@@ -55,4 +55,12 @@ describe('Solidity Merger', () => {
   it('should compile extended class with default parameters', async () => {
     await testFile('DefaultParamentersInheritance')
   })
+
+  it('should compile contacts with keywords inside strings and comments', async () => {
+    await testFile('ContactWithKeywordsInsideString')
+  });
+
+  it('should compile file leaving the comments inside exports', async () => {
+    await testFile('LocalImportsWithComments', { removeComments: false });
+  });
 });

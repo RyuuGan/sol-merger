@@ -14,16 +14,18 @@ const error = Debug('sol-merger:error');
 const log = Debug('sol-merge:log');
 
 export class Merger {
-  delimeter: string;
-  registeredImports: RegistredImport[];
-  nodeModulesRoot: string;
+  delimeter: string = this.options.delimeter || '\n\n';
+  removeComments: boolean;
 
-  constructor(options: SolMergerOptions = {}) {
-    const { delimeter } = options;
+  registeredImports: RegistredImport[] = [];
+  nodeModulesRoot: string = null;
 
-    this.delimeter = delimeter || '\n\n';
-    this.registeredImports = [];
-    this.nodeModulesRoot = null;
+  constructor(private options: SolMergerOptions = {}) {
+    if ('removeComments' in options) {
+      this.removeComments = options.removeComments;
+    } else {
+      this.removeComments = true;
+    }
   }
 
   getPragmaRegex() {
@@ -38,7 +40,7 @@ export class Merger {
     let result = '';
     const pragmaRegex = this.getPragmaRegex();
     let group = pragmaRegex.exec(contents);
-    while(group) {
+    while (group) {
       result += group[1] + '\n';
       group = pragmaRegex.exec(contents);
     }
@@ -66,7 +68,10 @@ export class Merger {
       this.registeredImports = [];
       this.nodeModulesRoot = await this.getNodeModulesPath(file);
     }
-    const analyzedFile = await new FileAnalyzer(file).analyze();
+    const analyzedFile = await new FileAnalyzer(
+      file,
+      this.removeComments,
+    ).analyze();
 
     let result = '';
 
@@ -207,6 +212,7 @@ export class Merger {
 
 export interface SolMergerOptions {
   delimeter?: string;
+  removeComments?: boolean;
 }
 
 export interface RegistredImport {

@@ -1,9 +1,14 @@
+import Debug from 'debug';
 import fs from 'fs-extra';
+import parser from 'solidity-parser-antlr';
 import stripComments from 'strip-json-comments';
 import { RegistredImport } from './merger';
 
+const error = Debug('sol-merger:error');
+
 export class FileAnalyzer {
   filename: string;
+  removeComments: boolean;
   /**
    * Builds the function body depending on the export
    */
@@ -36,8 +41,9 @@ export class FileAnalyzer {
   /**
    * Filename to read to get contract data
    */
-  constructor(filename: string) {
+  constructor(filename: string, removeComments: boolean = true) {
     this.filename = filename;
+    this.removeComments = removeComments;
   }
 
   /**
@@ -46,7 +52,9 @@ export class FileAnalyzer {
   async analyze(): Promise<FileAnalyzerResult> {
     await fs.stat(this.filename);
     let contents = await fs.readFile(this.filename, { encoding: 'utf-8' });
-    contents = stripComments(contents, { whitespace: false });
+    if (this.removeComments) {
+      contents = stripComments(contents, { whitespace: false });
+    }
     const imports = this.analyzeImports(contents);
     const exports = this.analyzeExports(contents);
     return {
@@ -129,76 +137,30 @@ export class FileAnalyzer {
    *
    */
   analyzeExports(contents: string): FileAnalyzerExportsResult[] {
-    const exportRegex = /(contract|library|interface)\s+([a-zA-Z_$][a-zA-Z_$0-9]*)\s*([\s\S]*?)\{/g;
-    const isRegex = /^is\s*[a-zA-Z_$][a-zA-Z_$0-9]*(.[a-zA-Z_$][a-zA-Z_$0-9]*)?(\([\s\S]*?\))?(,\s*?[a-zA-Z_$][a-zA-Z_$0-9]*(.[a-zA-Z_$][a-zA-Z_$0-9]*)?(\([\s\S]*?\))?)*\s*$/;
-    const results = [];
-    let group: RegExpExecArray;
-    while ((group = exportRegex.exec(contents))) {
-      const [, type, name, is] = group;
-      // Checking that `is` clause is correct
-      if (is.trim() && !isRegex.test(is.trim())) {
-        continue;
-      }
-      const body = this.findBodyEnd(
-        contents,
-        group.index + group[0].length - 1,
-      );
-      results.push({
-        type,
-        name,
-        is,
-        body,
+    try {
+      const ast = parser.parse(contents, { loc: true, range: true });
+      const results: FileAnalyzerExportsResult[] = [];
+      const exportRegex = /(contract|library|interface)\s+([a-zA-Z_$][a-zA-Z_$0-9]*)\s*([\s\S]*?)\{/;
+      parser.visit(ast, {
+        ContractDefinition: (node) => {
+          const contract = contents.substring(node.range[0], node.range[1] + 1);
+          const group = exportRegex.exec(contract);
+          const [match, _, __, is] = group;
+          results.push({
+            is: is,
+            name: node.name,
+            type: node.kind as any,
+            body: contract.substring(match.length - 1),
+          });
+        },
       });
+      return results;
+    } catch (e) {
+      if (e instanceof (parser as any).ParserError) {
+        error(e.errors);
+      }
+      return [];
     }
-    return results;
-  }
-
-  /**
-   * @param contents file contents
-   * @param start start of the body, start must be pointing to "{"
-   * @returns body of the export
-   */
-  findBodyEnd(contents: string, start: number): string {
-    let deep = 1;
-    let idx = start + 1;
-    let inString = false;
-    let isSingleQuotedString = false;
-    while (deep !== 0 && idx < contents.length) {
-      if (contents[idx] === '}' && !inString) {
-        deep -= 1;
-      }
-      if (contents[idx] === '{' && !inString) {
-        deep += 1;
-      }
-
-      if (contents[idx] === '"') {
-        if (
-          (inString && contents[idx - 1] !== '\\' && !isSingleQuotedString) ||
-          !inString
-        ) {
-          isSingleQuotedString = false;
-          inString = !inString;
-        }
-      }
-
-      if (contents[idx] === "'") {
-        if (
-          (inString && contents[idx - 1] !== '\\' && isSingleQuotedString) ||
-          !inString
-        ) {
-          isSingleQuotedString = true;
-          inString = !inString;
-        }
-      }
-
-      idx += 1;
-    }
-    if (deep !== 0) {
-      throw new Error(
-        'Export is not correct. Has more opening brackets then closing.',
-      );
-    }
-    return contents.substring(start, idx);
   }
 }
 
