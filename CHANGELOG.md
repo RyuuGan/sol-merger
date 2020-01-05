@@ -1,3 +1,20 @@
+# [1.2.0](https://github.com/RyuuGan/sol-merger/compare/v1.1.1...v1.2.0) (2020-01-05)
+
+
+### Bug Fixes
+
+* **FileAnalyzer:** remove global from regex, remove contract if it is analyzed ([685bdc3](https://github.com/RyuuGan/sol-merger/commit/685bdc3a94ef399d77b6e66acc69143bf35b59ce)), closes [#24](https://github.com/RyuuGan/sol-merger/issues/24)
+
+
+### Features
+
+* **comments:** add comments support to CLI tool ([3f4ad12](https://github.com/RyuuGan/sol-merger/commit/3f4ad12bb662b544d0bd9243107de5fcb07b1c3f))
+* **comments:** add support for comments inside exports ([776d053](https://github.com/RyuuGan/sol-merger/commit/776d053ef2e2f9140cb21970b554e4cfe8dac6fa)), closes [#19](https://github.com/RyuuGan/sol-merger/issues/19)
+* **FileAnalyzer:** use external library to parse contracts. ([cbee328](https://github.com/RyuuGan/sol-merger/commit/cbee3284ec17402ec49d520396d24d49a2eb7cea)), closes [#24](https://github.com/RyuuGan/sol-merger/issues/24)
+* **merge:** add support for optional options in merge function ([06c428a](https://github.com/RyuuGan/sol-merger/commit/06c428a8f3c49bddd6fa56df15527b5de86df1fc))
+
+
+
 ## [1.1.1](https://github.com/RyuuGan/sol-merger/compare/v1.1.0...v1.1.1) (2019-10-22)
 
 
