@@ -8,6 +8,7 @@ const error = Debug('sol-merger:error');
 
 export class FileAnalyzer {
   filename: string;
+  removeComments: boolean;
   /**
    * Builds the function body depending on the export
    */
@@ -40,8 +41,9 @@ export class FileAnalyzer {
   /**
    * Filename to read to get contract data
    */
-  constructor(filename: string) {
+  constructor(filename: string, removeComments: boolean = true) {
     this.filename = filename;
+    this.removeComments = removeComments;
   }
 
   /**
@@ -50,7 +52,9 @@ export class FileAnalyzer {
   async analyze(): Promise<FileAnalyzerResult> {
     await fs.stat(this.filename);
     let contents = await fs.readFile(this.filename, { encoding: 'utf-8' });
-    contents = stripComments(contents, { whitespace: false });
+    if (this.removeComments) {
+      contents = stripComments(contents, { whitespace: false });
+    }
     const imports = this.analyzeImports(contents);
     const exports = this.analyzeExports(contents);
     return {
