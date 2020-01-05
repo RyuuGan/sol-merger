@@ -56,13 +56,6 @@ sol-merger --help
 
 More info about `glob` available at [node-glob repository](https://github.com/isaacs/node-glob)
 
-# Known Issues
-
-Currently if you use named imports from the file that have multiple exports
-(contacts, libraries, interfaces) it only imports the ones that are requested
-without analyzing the dependencies inside file. That means you should NOT use
-named imports for multiple exports OR import all the required exports.
-
 See tests for more examples.
 
 # Plugin for VSCode
