@@ -8,14 +8,12 @@ import Debug from 'debug';
 import { Merger } from '../lib/merger';
 import { done } from '../utils/done';
 import program from 'commander';
-import { version } from '../package.json';
 
 const debug = Debug('sol-merger:debug');
 
 let inputGlob: string, outputDir: string, append: string;
 
 program
-  .version(`v${version}`, '-v, --version')
   .option('-a, --append [append]', '', /^([a-zA-Z_]+)$/)
   .option('-c, --with-comments', `Doesn't remove comment from exports`, false)
   .arguments('<glob> [outputDir]')
