@@ -1,3 +1,16 @@
+## [1.2.2](https://github.com/RyuuGan/sol-merger/compare/v1.2.1...v1.2.2) (2020-01-07)
+
+
+### Bug Fixes
+
+* **bin:** don't use package.json, so it will not be copied ([d7e7d5e](https://github.com/RyuuGan/sol-merger/commit/d7e7d5e072be93e30c7405af680914aad3aff86b))
+
+
+
+## [1.2.1](https://github.com/RyuuGan/sol-merger/compare/v1.2.0...v1.2.1) (2020-01-07)
+
+
+
 # [1.2.0](https://github.com/RyuuGan/sol-merger/compare/v1.1.1...v1.2.0) (2020-01-05)
 
 
