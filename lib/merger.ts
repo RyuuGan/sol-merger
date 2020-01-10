@@ -11,12 +11,13 @@ import {
 } from './fileAnalyzer';
 
 const error = Debug('sol-merger:error');
-const log = Debug('sol-merge:log');
+const debug = Debug('sol-merger:debug');
 
 export class Merger {
   delimeter: string = this.options.delimeter || '\n\n';
   removeComments: boolean;
 
+  registeredImportStatements: string[] = [];
   registeredImports: RegistredImport[] = [];
   nodeModulesRoot: string = null;
 
@@ -59,15 +60,37 @@ export class Merger {
     );
   }
 
+  async init(file: string) {
+    this.registeredImports = [];
+    this.registeredImportStatements = [];
+    this.nodeModulesRoot = await this.getNodeModulesPath(file);
+  }
+
+  isImportProcessed(importStatement: string): boolean {
+    return this.registeredImportStatements.includes(importStatement);
+  }
+
+  registerImportStatement(importStatement: string) {
+    this.registeredImportStatements.push(importStatement);
+  }
+
   async processFile(
     file: string,
     isRoot: boolean,
     parentImport?: FileAnalyzerImportsResult,
-  ) {
+  ): Promise<string> {
     if (isRoot) {
-      this.registeredImports = [];
-      this.nodeModulesRoot = await this.getNodeModulesPath(file);
+      await this.init(file);
     }
+    if (this.isImportProcessed(parentImport?.importStatement)) {
+      return '';
+    }
+    if (parentImport) {
+      this.registerImportStatement(parentImport.importStatement);
+    }
+
+    debug('Processing file %s', file);
+
     const analyzedFile = await new FileAnalyzer(
       file,
       this.removeComments,
@@ -159,7 +182,7 @@ export class Merger {
         : null;
     const isImported = this.isImported(analyzedFile.filename, e.name, rename);
     if (isImported) {
-      log('%s %s %s', '⚠', e.name, analyzedFile.filename);
+      debug('%s Already imported: %s %s', '⚠', e.name, analyzedFile.filename);
       return;
     }
     if (beImported) {

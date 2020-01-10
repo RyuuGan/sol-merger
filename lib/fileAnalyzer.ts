@@ -121,6 +121,7 @@ export class FileAnalyzer {
 
     return {
       file,
+      importStatement,
       globalRenameImport,
       namedImports,
     };
@@ -172,6 +173,7 @@ export interface FileAnalyzerResult {
 }
 
 export interface FileAnalyzerImportsResult {
+  importStatement: string;
   file: string;
   globalRenameImport: string | null;
   namedImports: FileAnalyzerNamedImportResult[] | null;

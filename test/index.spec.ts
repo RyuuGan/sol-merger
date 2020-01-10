@@ -12,6 +12,7 @@ describe('Solidity Merger', () => {
       'Delimeter must be set to 2 new lines',
     );
     assert.isArray(merger.registeredImports, 'Must be initialized as array');
+    assert.isArray(merger.registeredImportStatements, 'Must be initialized as array');
   });
 
   it('should import relative files', async () => {
@@ -63,4 +64,8 @@ describe('Solidity Merger', () => {
   it('should compile file leaving the comments inside exports', async () => {
     await testFile('LocalImportsWithComments', { removeComments: false });
   });
+
+  it('should compile while having circular dependencies', async () => {
+    await testFile('circular/Circular1');
+  })
 });

@@ -17,6 +17,7 @@ describe('FileAnalyzer', () => {
       const result = fileAnalyzer.analyzeImport('import "filename.sol";');
       assert.deepEqual(result, {
         file: 'filename.sol',
+        importStatement: 'import "filename.sol";',
         globalRenameImport: null,
         namedImports: null,
       });
@@ -30,6 +31,7 @@ describe('FileAnalyzer', () => {
         result,
         {
           file: 'filename.sol',
+          importStatement: 'import "filename.sol" as myName;',
           globalRenameImport: 'myName',
           namedImports: null,
         },
@@ -43,6 +45,7 @@ describe('FileAnalyzer', () => {
         result,
         {
           file: 'filename.sol',
+          importStatement: 'import * as myName from "filename.sol";',
           globalRenameImport: 'myName',
           namedImports: null,
         },
@@ -56,6 +59,7 @@ describe('FileAnalyzer', () => {
       );
       assert.deepEqual(result, {
         file: 'filename.sol',
+        importStatement: 'import { A, B as Bingo, C as C1, D } from "filename.sol";',
         globalRenameImport: null,
         namedImports: [
           {
@@ -95,21 +99,25 @@ describe('FileAnalyzer', () => {
       assert.deepEqual(imports, [
         {
           file: 'filename.sol',
+          importStatement: 'import "filename.sol";',
           globalRenameImport: null,
           namedImports: null,
         },
         {
           file: 'filename1.sol',
+          importStatement: 'import "filename1.sol" as myName;',
           globalRenameImport: 'myName',
           namedImports: null,
         },
         {
           file: 'filename2.sol',
+          importStatement: 'import * as myName from "filename2.sol";',
           globalRenameImport: 'myName',
           namedImports: null,
         },
         {
           file: 'filename3.sol',
+          importStatement: 'import { A, B as Bingo, C as C1, D } from "filename3.sol";',
           globalRenameImport: null,
           namedImports: [
             {
@@ -189,9 +197,9 @@ describe('FileAnalyzer', () => {
 
     it('should return empty array if there are no exports', () => {
       const exports = fileAnalyzer.analyzeExports(`
-        Some contracts without exports
+        // Some contracts without exports
 
-        Some contract text that is not required here
+        // Some contract text that is not required here
       `);
 
       assert.deepEqual(exports, []);
