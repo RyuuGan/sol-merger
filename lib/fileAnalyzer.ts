@@ -3,6 +3,7 @@ import fs from 'fs-extra';
 import parser from 'solidity-parser-antlr';
 import stripComments from 'strip-json-comments';
 import { RegistredImport } from './importRegistry';
+import { ImportsAnalyzerResult, ImportsAnalyzer } from './importsAnalyzer';
 
 const error = Debug('sol-merger:error');
 
@@ -55,75 +56,15 @@ export class FileAnalyzer {
     if (this.removeComments) {
       contents = stripComments(contents, { whitespace: false });
     }
-    const imports = this.analyzeImports(contents);
+    const importsAnalyzer = new ImportsAnalyzer(contents);
+    const imports = importsAnalyzer.analyzeImports();
+
     const exports = this.analyzeExports(contents);
     return {
       filename: this.filename,
       contents,
       imports,
       exports,
-    };
-  }
-
-  /**
-   * Analyzes all the imports of the file
-   */
-  analyzeImports(contents: string): FileAnalyzerImportsResult[] {
-    const imports = [];
-    const importRegex = /import .+?;/g;
-    let group;
-    while ((group = importRegex.exec(contents))) {
-      const importStatement = group[0];
-      const analyzedImport = this.analyzeImport(importStatement);
-      imports.push(analyzedImport);
-    }
-    return imports;
-  }
-
-  /**
-   * Single import statement to process. Basicly it analizes next things:
-   *
-   * 1. Rename of the global import if any
-   * 2. Named imports if any
-   * 3. Extract filename from import
-   *
-   */
-  analyzeImport(importStatement: string): FileAnalyzerImportsResult {
-    const fileRegex = /['"](.+?)['"]/;
-    const group = fileRegex.exec(importStatement);
-    if (!group) {
-      throw new Error('Unknown import statement');
-    }
-    const file = group[1];
-    const globalRenameRegex = /.+\s+as\s+([a-zA-Z_$][a-zA-Z_$0-9]*);$|.+\*\s+as\s+([a-zA-Z_$][a-zA-Z_$0-9]*)\s+from.+;$/;
-    const renameGroup = globalRenameRegex.exec(importStatement);
-    const globalRenameImport =
-      renameGroup && (renameGroup[1] || renameGroup[2]);
-
-    const namedImportsRegex = /\{(.+)\}/;
-    const namedImportsGroup = namedImportsRegex.exec(importStatement);
-
-    const namedImports =
-      namedImportsGroup &&
-      namedImportsGroup[1].split(',').map((namedImport) => {
-        if (namedImport.indexOf('as') !== -1) {
-          const [name, as] = namedImport.trim().split(/\s+as\s+/);
-          return {
-            name,
-            as,
-          };
-        }
-        return {
-          name: namedImport.trim(),
-          as: null,
-        };
-      });
-
-    return {
-      file,
-      importStatement,
-      globalRenameImport,
-      namedImports,
     };
   }
 
@@ -168,20 +109,8 @@ export class FileAnalyzer {
 export interface FileAnalyzerResult {
   filename: string;
   contents: string;
-  imports: FileAnalyzerImportsResult[];
+  imports: ImportsAnalyzerResult[];
   exports: FileAnalyzerExportsResult[];
-}
-
-export interface FileAnalyzerImportsResult {
-  importStatement: string;
-  file: string;
-  globalRenameImport: string | null;
-  namedImports: FileAnalyzerNamedImportResult[] | null;
-}
-
-export interface FileAnalyzerNamedImportResult {
-  name: string;
-  as: string;
 }
 
 export interface FileAnalyzerExportsResult {

@@ -1,15 +1,18 @@
-import path from 'path';
 import { exec } from 'child_process';
-import { Utils } from './utils';
 import Debug from 'debug';
+import path from 'path';
 import {
   FileAnalyzer,
-  FileAnalyzerImportsResult,
-  FileAnalyzerResult,
-  FileAnalyzerNamedImportResult,
   FileAnalyzerExportsResult,
+  FileAnalyzerResult,
 } from './fileAnalyzer';
 import { ImportsRegistry } from './importRegistry';
+import {
+  ImportsAnalyzerResult,
+  ImportsAnalyzerNamedImportResult,
+  ImportsAnalyzer,
+} from './importsAnalyzer';
+import { Utils } from './utils';
 
 const error = Debug('sol-merger:error');
 const debug = Debug('sol-merger:debug');
@@ -62,7 +65,7 @@ export class Merger {
   async processFile(
     file: string,
     isRoot: boolean,
-    parentImport?: FileAnalyzerImportsResult,
+    parentImport?: ImportsAnalyzerResult,
   ): Promise<string> {
     if (isRoot) {
       await this.init(file);
@@ -121,11 +124,13 @@ export class Merger {
 
   async processExports(
     analyzedFile: FileAnalyzerResult,
-    parentImport?: FileAnalyzerImportsResult,
+    parentImport?: ImportsAnalyzerResult,
   ): Promise<string[]> {
-    const isAllImport = Utils.isAllImport(parentImport);
+    const isAllImport = ImportsAnalyzer.isAllImport(parentImport);
 
-    const isRenameGlobalImport = Utils.isRenameGlobalImport(parentImport);
+    const isRenameGlobalImport = ImportsAnalyzer.isRenameGlobalImport(
+      parentImport,
+    );
 
     const shouldBeImported = (exportName: string) => {
       return (
@@ -154,9 +159,9 @@ export class Merger {
 
   processExport(
     analyzedFile: FileAnalyzerResult,
-    parentImport: FileAnalyzerImportsResult | undefined,
+    parentImport: ImportsAnalyzerResult | undefined,
     e: FileAnalyzerExportsResult,
-    shouldBeImported: (e: string) => boolean | FileAnalyzerNamedImportResult,
+    shouldBeImported: (e: string) => boolean | ImportsAnalyzerNamedImportResult,
     isRenameGlobalImport: boolean,
     result: string[],
   ): void {
