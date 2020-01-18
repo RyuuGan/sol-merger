@@ -1,13 +1,10 @@
 import { assert } from 'chai';
-import { FileAnalyzer } from '../lib/fileAnalyzer';
+import { ExportsAnalyzer } from '../lib/exportsAnalyzer';
 
-describe('FileAnalyzer', () => {
-
+describe('ExportsAnalyzer', () => {
   describe('analyzeExports', () => {
-    const fileAnalyzer = new FileAnalyzer('./contracts/LocalImports.sol');
-
     it('should analyze exports', () => {
-      const exports = fileAnalyzer.analyzeExports(`
+      const exportsAnalyzer = new ExportsAnalyzer(`
         contract A { }
 
         contract B is A {
@@ -22,6 +19,7 @@ describe('FileAnalyzer', () => {
           // i...
         }
       `);
+      const exports = exportsAnalyzer.analyzeExports();
 
       assert.deepEqual(exports, [
         { type: 'contract', name: 'A', is: '', body: '{ }' },
@@ -47,11 +45,12 @@ describe('FileAnalyzer', () => {
     });
 
     it('should return empty array if there are no exports', () => {
-      const exports = fileAnalyzer.analyzeExports(`
+      const exportsAnalyzer = new ExportsAnalyzer(`
         // Some contracts without exports
 
         // Some contract text that is not required here
       `);
+      const exports = exportsAnalyzer.analyzeExports();
 
       assert.deepEqual(exports, []);
     });

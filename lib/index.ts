@@ -6,6 +6,8 @@ import {
   ImportsAnalyzerNamedImportResult,
 } from './importsAnalyzer';
 
+import { ExportsAnalyzer, ExportsAnalyzerResult } from './exportsAnalyzer';
+
 const merge = async (file: string, options: SolMergerOptions = {}) => {
   const merger = new Merger(options);
   return merger.processFile(file, true);

@@ -1,11 +1,8 @@
 import { exec } from 'child_process';
 import Debug from 'debug';
 import path from 'path';
-import {
-  FileAnalyzer,
-  FileAnalyzerExportsResult,
-  FileAnalyzerResult,
-} from './fileAnalyzer';
+import { ExportsAnalyzerResult } from './exportsAnalyzer';
+import { FileAnalyzer, FileAnalyzerResult } from './fileAnalyzer';
 import { ImportsRegistry } from './importRegistry';
 import {
   ImportsAnalyzerResult,
@@ -160,7 +157,7 @@ export class Merger {
   processExport(
     analyzedFile: FileAnalyzerResult,
     parentImport: ImportsAnalyzerResult | undefined,
-    e: FileAnalyzerExportsResult,
+    e: ExportsAnalyzerResult,
     shouldBeImported: (e: string) => boolean | ImportsAnalyzerNamedImportResult,
     isRenameGlobalImport: boolean,
     result: string[],
