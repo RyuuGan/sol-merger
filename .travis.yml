@@ -2,3 +2,8 @@ language: node_js
 node_js:
   - "node"
   - "10"
+script:
+  - npm test
+  - npm run lint
+  - npm run build
+  - npm publish --dry-run
