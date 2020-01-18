@@ -2,7 +2,7 @@ import Debug from 'debug';
 import fs from 'fs-extra';
 import parser from 'solidity-parser-antlr';
 import stripComments from 'strip-json-comments';
-import { RegistredImport } from './merger';
+import { RegistredImport } from './importRegistry';
 
 const error = Debug('sol-merger:error');
 

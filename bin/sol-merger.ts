@@ -15,7 +15,7 @@ let inputGlob: string, outputDir: string, append: string;
 
 program
   .option('-a, --append [append]', '', /^([a-zA-Z_]+)$/)
-  .option('-c, --with-comments', `Doesn't remove comment from exports`, false)
+  .option('-c, --remove-comments', `Remove comment from exports`, false)
   .arguments('<glob> [outputDir]')
   .action((_glob, _outputDir) => {
     inputGlob = _glob;
@@ -38,7 +38,7 @@ if (outputDir) {
 }
 
 debug('Output directory', outputDir);
-debug('With comments?', program.withComments);
+debug('RemoveComments?', program.removeComments);
 
 glob(
   inputGlob,
@@ -62,7 +62,7 @@ async function execute(err: Error, files: string[]) {
   }
 
   const promises = files.map(async (file) => {
-    const merger = new Merger({ delimeter: '\n\n', removeComments: !program.withComments });
+    const merger = new Merger({ delimeter: '\n\n', removeComments: program.removeComments });
     let result: string;
     result = await merger.processFile(file, true);
     let outputFile: string;
