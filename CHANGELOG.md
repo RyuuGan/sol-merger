@@ -1,3 +1,20 @@
+# [2.0.0](https://github.com/RyuuGan/sol-merger/compare/v1.2.2...v2.0.0) (2020-02-05)
+
+
+### Features
+
+* **import-registry:** extract import registry from FileAnalyzer, make removeComments false by default ([65bc4e6](https://github.com/RyuuGan/sol-merger/commit/65bc4e6dad5a63c9e9cba9860deade7c10eb2122))
+* **Merger:** add support for circular dependencies ([a7dd280](https://github.com/RyuuGan/sol-merger/commit/a7dd28004c5b7ae8049f00cd60829fff08cb882f)), closes [#27](https://github.com/RyuuGan/sol-merger/issues/27)
+* **nodejs:** update minimum version to node 10 ([95179e0](https://github.com/RyuuGan/sol-merger/commit/95179e0f3a3458f5f52b2f58e50ed20265b0a589))
+
+
+### BREAKING CHANGES
+
+* **import-registry:** removeComments false by default
+* **nodejs:** update minimum version of nodejs supported to node 10
+
+
+
 ## [1.2.2](https://github.com/RyuuGan/sol-merger/compare/v1.2.1...v1.2.2) (2020-01-07)
 
 
