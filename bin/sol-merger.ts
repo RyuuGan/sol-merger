@@ -11,7 +11,9 @@ import program from 'commander';
 
 const debug = Debug('sol-merger:debug');
 
-let inputGlob: string, outputDir: string, append: string;
+let inputGlob = '';
+let outputDir = '';
+let append = '';
 
 program
   .option('-a, --append [append]', '', /^([a-zA-Z_]+)$/)
@@ -46,7 +48,7 @@ glob(
     cwd: process.cwd(),
     absolute: true,
   },
-  execute
+  execute,
 );
 
 async function execute(err: Error, files: string[]) {
@@ -62,7 +64,10 @@ async function execute(err: Error, files: string[]) {
   }
 
   const promises = files.map(async (file) => {
-    const merger = new Merger({ delimeter: '\n\n', removeComments: program.removeComments });
+    const merger = new Merger({
+      delimeter: '\n\n',
+      removeComments: program.removeComments,
+    });
     let result: string;
     result = await merger.processFile(file, true);
     let outputFile: string;
@@ -72,7 +77,7 @@ async function execute(err: Error, files: string[]) {
       const extname = path.extname(file);
       outputFile = path.join(
         path.dirname(file),
-        path.basename(file, extname) + append + extname
+        path.basename(file, extname) + append + extname,
       );
     }
     debug(`${file} -> ${outputFile}`);
