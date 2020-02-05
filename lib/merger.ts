@@ -1,31 +1,30 @@
-import path from 'path';
 import { exec } from 'child_process';
-import { Utils } from './utils';
 import Debug from 'debug';
-import {
-  FileAnalyzer,
-  FileAnalyzerImportsResult,
-  FileAnalyzerResult,
-  FileAnalyzerNamedImportResult,
-  FileAnalyzerExportsResult,
-} from './fileAnalyzer';
+import path from 'path';
+import { ExportsAnalyzerResult } from './exportsAnalyzer';
+import { FileAnalyzer, FileAnalyzerResult } from './fileAnalyzer';
+import { ImportsRegistry } from './importRegistry';
+import { ImportsAnalyzer, ImportsAnalyzerResult } from './importsAnalyzer';
+import { Utils } from './utils';
 
 const error = Debug('sol-merger:error');
-const log = Debug('sol-merge:log');
+const debug = Debug('sol-merger:debug');
 
 export class Merger {
   delimeter: string = this.options.delimeter || '\n\n';
   removeComments: boolean;
 
-  registeredImports: RegistredImport[] = [];
-  nodeModulesRoot: string = null;
+  private importRegistry: ImportsRegistry;
+  nodeModulesRoot = '';
 
   constructor(private options: SolMergerOptions = {}) {
     if ('removeComments' in options) {
-      this.removeComments = options.removeComments;
+      this.removeComments = options.removeComments as boolean;
     } else {
-      this.removeComments = true;
+      this.removeComments = false;
     }
+
+    this.importRegistry = new ImportsRegistry();
   }
 
   getPragmaRegex() {
@@ -51,28 +50,41 @@ export class Merger {
     return contents.replace(this.getPragmaRegex(), '').trim();
   }
 
-  isImported(filename: string, name: string, as: string | null) {
-    return (
-      this.registeredImports.find(
-        (ri) => ri.file === filename && ri.name === name && ri.as === as,
-      ) !== undefined // eslint-disable-line
-    );
+  async init(file: string) {
+    this.importRegistry = new ImportsRegistry();
+    this.nodeModulesRoot = await this.getNodeModulesPath(file);
   }
 
   async processFile(
     file: string,
     isRoot: boolean,
-    parentImport?: FileAnalyzerImportsResult,
-  ) {
+    parentImport?: ImportsAnalyzerResult,
+  ): Promise<string> {
     if (isRoot) {
-      this.registeredImports = [];
-      this.nodeModulesRoot = await this.getNodeModulesPath(file);
+      await this.init(file);
     }
+    if (this.importRegistry.isImportProcessed(parentImport?.importStatement)) {
+      return '';
+    }
+    if (parentImport) {
+      this.importRegistry.registerImportStatement(parentImport.importStatement);
+    }
+
+    debug('Processing file %s', file);
+
     const analyzedFile = await new FileAnalyzer(
       file,
       this.removeComments,
     ).analyze();
 
+    return this.buildString(analyzedFile, isRoot, parentImport);
+  }
+
+  private async buildString(
+    analyzedFile: FileAnalyzerResult,
+    isRoot: boolean,
+    parentImport?: ImportsAnalyzerResult,
+  ) {
     let result = '';
 
     if (isRoot) {
@@ -86,8 +98,8 @@ export class Merger {
       result += i + this.delimeter;
     }
 
-    const exports = await this.processExports(analyzedFile, parentImport);
-    for (const e of exports) {
+    const fileExports = await this.processExports(analyzedFile, parentImport);
+    for (const e of fileExports) {
       result += e + this.delimeter;
     }
 
@@ -95,7 +107,7 @@ export class Merger {
   }
 
   async processImports(analyzedFile: FileAnalyzerResult): Promise<string[]> {
-    const result = [];
+    const result: string[] = [];
     for (const i of analyzedFile.imports) {
       let filePath = Utils.isRelative(i.file)
         ? path.join(path.dirname(analyzedFile.filename), i.file)
@@ -113,60 +125,59 @@ export class Merger {
 
   async processExports(
     analyzedFile: FileAnalyzerResult,
-    parentImport?: FileAnalyzerImportsResult,
+    parentImport?: ImportsAnalyzerResult,
   ): Promise<string[]> {
-    const isAllImport = Utils.isAllImport(parentImport);
+    const result: string[] = [];
 
-    const isRenameGlobalImport = Utils.isRenameGlobalImport(parentImport);
+    analyzedFile.exports.forEach((e) => {
+      const fileExports = this.processExport(analyzedFile, e, parentImport);
+
+      result.push(...fileExports);
+    });
+    return result;
+  }
+
+  private processExport(
+    analyzedFile: FileAnalyzerResult,
+    e: ExportsAnalyzerResult,
+    parentImport?: ImportsAnalyzerResult,
+  ): string[] {
+    const isAllImport = ImportsAnalyzer.isAllImport(parentImport);
+
+    const isRenameGlobalImport = ImportsAnalyzer.isRenameGlobalImport(
+      parentImport,
+    );
 
     const shouldBeImported = (exportName: string) => {
       return (
         isAllImport ||
         isRenameGlobalImport ||
-        parentImport.namedImports.find(
+        parentImport?.namedImports?.find(
           (namedImport) => namedImport.name === exportName,
         )
       );
     };
 
     const result: string[] = [];
-
-    analyzedFile.exports.forEach((e) => {
-      this.processExport(
-        analyzedFile,
-        parentImport,
-        e,
-        shouldBeImported,
-        isRenameGlobalImport,
-        result,
-      );
-    });
-    return result;
-  }
-
-  processExport(
-    analyzedFile: FileAnalyzerResult,
-    parentImport: FileAnalyzerImportsResult | undefined,
-    e: FileAnalyzerExportsResult,
-    shouldBeImported: (e: string) => boolean | FileAnalyzerNamedImportResult,
-    isRenameGlobalImport: boolean,
-    result: string[],
-  ): void {
     const beImported = shouldBeImported(e.name);
     let rename =
       typeof beImported === 'object' && beImported !== null
         ? beImported.as
         : null;
-    const isImported = this.isImported(analyzedFile.filename, e.name, rename);
+    const isImported = this.importRegistry.isImported(
+      analyzedFile.filename,
+      e.name,
+      rename,
+    );
     if (isImported) {
-      log('%s %s %s', '⚠', e.name, analyzedFile.filename);
-      return;
+      debug('%s Already imported: %s %s', '⚠', e.name, analyzedFile.filename);
+      return [];
     }
     if (beImported) {
-      if (isRenameGlobalImport) {
+      if (isRenameGlobalImport && parentImport) {
         rename = `${parentImport.globalRenameImport}$${e.name}`;
       }
-      const globalRenames = this.getGlobalImports();
+      const globalRenames = this.importRegistry.getGlobalImports();
       const body = FileAnalyzer.buildExportBody(
         analyzedFile,
         e,
@@ -174,21 +185,14 @@ export class Merger {
         globalRenames,
       );
       result.push(body);
-      this.registerImport({
+      this.importRegistry.registerImport({
         as: rename,
         file: analyzedFile.filename,
         name: e.name,
         globalRename: parentImport && parentImport.globalRenameImport,
       });
     }
-  }
-
-  registerImport(i: RegistredImport): void {
-    this.registeredImports.push(i);
-  }
-
-  getGlobalImports(): RegistredImport[] {
-    return this.registeredImports.filter((i) => i.globalRename);
+    return result;
   }
 
   stripImports(contents: string): string {
@@ -213,11 +217,4 @@ export class Merger {
 export interface SolMergerOptions {
   delimeter?: string;
   removeComments?: boolean;
-}
-
-export interface RegistredImport {
-  file: string;
-  name: string;
-  as: string;
-  globalRename: string;
 }

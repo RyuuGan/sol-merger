@@ -11,7 +11,8 @@ describe('Solidity Merger', () => {
       '\n\n',
       'Delimeter must be set to 2 new lines',
     );
-    assert.isArray(merger.registeredImports, 'Must be initialized as array');
+
+    assert.strictEqual(merger.removeComments, false);
   });
 
   it('should import relative files', async () => {
@@ -31,15 +32,17 @@ describe('Solidity Merger', () => {
   });
 
   it('should not import twice same ', async () => {
-    await testFile('MultiImports');
+    await testFile('MultiImports', { removeComments: true });
   });
 
   it('should import only selected exports from file', async () => {
-    await testFile('DoubleNamedImports');
+    await testFile('DoubleNamedImports', { removeComments: true });
   });
 
   it('should import only selected exports from file even if it breaks the contract', async () => {
-    await testFile('NamedImportOnlySelectedFailContract');
+    await testFile('NamedImportOnlySelectedFailContract', {
+      removeComments: true,
+    });
   });
 
   it('should import relative files using merge function', async () => {
@@ -53,14 +56,18 @@ describe('Solidity Merger', () => {
   });
 
   it('should compile extended class with default parameters', async () => {
-    await testFile('DefaultParamentersInheritance')
-  })
+    await testFile('DefaultParamentersInheritance', { removeComments: true });
+  });
 
   it('should compile contacts with keywords inside strings and comments', async () => {
-    await testFile('ContactWithKeywordsInsideString')
+    await testFile('ContactWithKeywordsInsideString');
   });
 
   it('should compile file leaving the comments inside exports', async () => {
-    await testFile('LocalImportsWithComments', { removeComments: false });
+    await testFile('LocalImportsWithComments');
+  });
+
+  it('should compile while having circular dependencies', async () => {
+    await testFile('circular/Circular1');
   });
 });
