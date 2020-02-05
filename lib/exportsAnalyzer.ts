@@ -30,11 +30,17 @@ export class ExportsAnalyzer {
       const exportRegex = /(contract|library|interface)\s+([a-zA-Z_$][a-zA-Z_$0-9]*)\s*([\s\S]*?)\{/;
       parser.visit(ast, {
         ContractDefinition: (node) => {
+          if (!node.range) {
+            return;
+          }
           const contract = this.contents.substring(
             node.range[0],
             node.range[1] + 1,
           );
           const group = exportRegex.exec(contract);
+          if (!group) {
+            return;
+          }
           const [match, _, __, is] = group;
           results.push({
             is: is,

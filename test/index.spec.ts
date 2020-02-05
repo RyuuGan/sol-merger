@@ -11,10 +11,8 @@ describe('Solidity Merger', () => {
       '\n\n',
       'Delimeter must be set to 2 new lines',
     );
-    assert.isDefined(
-      merger.importRegistry,
-      'Must be initialized initialized by default',
-    );
+
+    assert.strictEqual(merger.removeComments, false);
   });
 
   it('should import relative files', async () => {

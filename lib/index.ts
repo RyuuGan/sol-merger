@@ -1,12 +1,11 @@
+import { ExportsAnalyzer, ExportsAnalyzerResult } from './exportsAnalyzer';
 import { FileAnalyzer } from './fileAnalyzer';
-import { Merger, SolMergerOptions } from './merger';
 import {
   ImportsAnalyzer,
-  ImportsAnalyzerResult,
   ImportsAnalyzerNamedImportResult,
+  ImportsAnalyzerResult,
 } from './importsAnalyzer';
-
-import { ExportsAnalyzer, ExportsAnalyzerResult } from './exportsAnalyzer';
+import { Merger, SolMergerOptions } from './merger';
 
 const merge = async (file: string, options: SolMergerOptions = {}) => {
   const merger = new Merger(options);
@@ -18,6 +17,8 @@ export {
   FileAnalyzer,
   merge,
   SolMergerOptions,
+  ExportsAnalyzer,
+  ExportsAnalyzerResult,
   ImportsAnalyzer,
   ImportsAnalyzerResult,
   ImportsAnalyzerNamedImportResult,

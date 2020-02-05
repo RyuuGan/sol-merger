@@ -10,6 +10,7 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "importHelpers": false,
+    "strictNullChecks": true,
     "target": "es6",
     "module": "commonjs",
     "typeRoots": ["node_modules/@types"],

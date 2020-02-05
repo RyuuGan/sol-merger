@@ -7,7 +7,7 @@ export interface ImportsAnalyzerResult {
 
 export interface ImportsAnalyzerNamedImportResult {
   name: string;
-  as: string;
+  as: string | null;
 }
 
 export class ImportsAnalyzer {
@@ -20,7 +20,7 @@ export class ImportsAnalyzer {
     );
   }
 
-  static isRenameGlobalImport(parentImport?: ImportsAnalyzerResult) {
+  static isRenameGlobalImport(parentImport?: ImportsAnalyzerResult): boolean | undefined {
     return parentImport && parentImport.globalRenameImport !== null;
   }
 
@@ -30,9 +30,9 @@ export class ImportsAnalyzer {
    * Analyzes all the imports of the file
    */
   analyzeImports(): ImportsAnalyzerResult[] {
-    const imports = [];
+    const imports: ImportsAnalyzerResult[] = [];
     const importRegex = /import .+?;/g;
-    let group: RegExpExecArray;
+    let group: RegExpExecArray | null;
     while ((group = importRegex.exec(this.contents))) {
       const importStatement = group[0];
       const analyzedImport = this.analyzeImport(importStatement);

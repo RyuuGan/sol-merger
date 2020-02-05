@@ -13,7 +13,7 @@ export class FileAnalyzer {
   static buildExportBody(
     analyzedFile: FileAnalyzerResult,
     e: ExportsAnalyzerResult,
-    newName: string,
+    newName: string | null,
     globalRenames: RegistredImport[],
   ): string {
     let is = e.is;

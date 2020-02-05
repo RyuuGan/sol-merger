@@ -1,15 +1,18 @@
 export interface RegistredImport {
   file: string;
   name: string;
-  as: string;
-  globalRename: string;
+  as?: string | null;
+  globalRename?: string | null;
 }
 
 export class ImportsRegistry {
   registeredImportStatements: string[] = [];
   registeredImports: RegistredImport[] = [];
 
-  isImportProcessed(importStatement: string): boolean {
+  isImportProcessed(importStatement?: string): boolean {
+    if (!importStatement) {
+      return false;
+    }
     return this.registeredImportStatements.includes(importStatement);
   }
 
