@@ -1,3 +1,12 @@
+## [2.0.1](https://github.com/RyuuGan/sol-merger/compare/v2.0.0...v2.0.1) (2020-02-07)
+
+
+### Bug Fixes
+
+* **imports:** change analyzer for imports statements ([3b31a00](https://github.com/RyuuGan/sol-merger/commit/3b31a00a468ef5205bca4be52a469d2ae4bf4dff))
+
+
+
 # [2.0.0](https://github.com/RyuuGan/sol-merger/compare/v1.2.2...v2.0.0) (2020-02-05)
 
 
