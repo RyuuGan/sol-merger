@@ -70,4 +70,11 @@ describe('Solidity Merger', () => {
   it('should compile while having circular dependencies', async () => {
     await testFile('circular/Circular1');
   });
+
+  it('should compile file without imports and exports (empty content)', async () => {
+    const merger = new Merger();
+    const file = path.join(__dirname, `/contracts/EmptyFile.sol`);
+    const merged = await merger.processFile(file, true);
+    assert.equal(merged, '');
+  });
 });

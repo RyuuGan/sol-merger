@@ -1,3 +1,6 @@
+import parser from 'solidity-parser-antlr';
+import { Utils } from './utils';
+
 export interface ImportsAnalyzerResult {
   importStatement: string;
   file: string;
@@ -20,7 +23,9 @@ export class ImportsAnalyzer {
     );
   }
 
-  static isRenameGlobalImport(parentImport?: ImportsAnalyzerResult): boolean | undefined {
+  static isRenameGlobalImport(
+    parentImport?: ImportsAnalyzerResult,
+  ): boolean | undefined {
     return parentImport && parentImport.globalRenameImport !== null;
   }
 
@@ -31,11 +36,29 @@ export class ImportsAnalyzer {
    */
   analyzeImports(): ImportsAnalyzerResult[] {
     const imports: ImportsAnalyzerResult[] = [];
-    const importRegex = /import .+?;/g;
-    let group: RegExpExecArray | null;
-    while ((group = importRegex.exec(this.contents))) {
-      const importStatement = group[0];
-      const analyzedImport = this.analyzeImport(importStatement);
+    const ast = Utils.getAstNode(this.contents);
+
+    if (!ast) {
+      return [];
+    }
+
+    const importDirectives: string[] = [];
+    parser.visit(ast, {
+      ImportDirective: (node) => {
+        if (!node || !node.range) {
+          return;
+        }
+        const importDirective = this.contents.substring(
+          node.range[0],
+          node.range[1] + 1,
+        );
+
+        importDirectives.push(importDirective);
+      },
+    });
+
+    for (const importDirective of importDirectives) {
+      const analyzedImport = this.analyzeImport(importDirective);
       imports.push(analyzedImport);
     }
     return imports;

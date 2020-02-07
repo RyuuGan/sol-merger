@@ -64,6 +64,7 @@ export class Merger {
       await this.init(file);
     }
     if (this.importRegistry.isImportProcessed(parentImport?.importStatement)) {
+      debug('  %s Import statement already processed: %s', '⚠', parentImport?.importStatement);
       return '';
     }
     if (parentImport) {
