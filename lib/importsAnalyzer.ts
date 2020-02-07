@@ -1,4 +1,5 @@
 import parser from 'solidity-parser-antlr';
+import { Utils } from './utils';
 
 export interface ImportsAnalyzerResult {
   importStatement: string;
@@ -35,7 +36,11 @@ export class ImportsAnalyzer {
    */
   analyzeImports(): ImportsAnalyzerResult[] {
     const imports: ImportsAnalyzerResult[] = [];
-    const ast = parser.parse(this.contents, { loc: true, range: true });
+    const ast = Utils.getAstNode(this.contents);
+
+    if (!ast) {
+      return [];
+    }
 
     const importDirectives: string[] = [];
     parser.visit(ast, {
