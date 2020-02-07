@@ -93,7 +93,7 @@ describe('ImportsAnalyzer', () => {
         import * as myName from "filename2.sol";
         import { A, B as Bingo, C as C1, D } from "filename3.sol";
 
-        Some contract text that is not required here`,
+        // Some contract text that is not required here`,
       );
       const imports = importsAnalyzer.analyzeImports();
 
@@ -146,9 +146,11 @@ describe('ImportsAnalyzer', () => {
     it('should return empty array if there are no imports', () => {
       const importsAnalyzer = new ImportsAnalyzer(
         `
-        Some contracts without imports
+        // Some contracts without imports
 
-        Some contract text that is not required here
+        contract A {}
+
+        // Some contract text that is not required here
         `,
       );
       const imports = importsAnalyzer.analyzeImports();
