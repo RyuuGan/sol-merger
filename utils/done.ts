@@ -1,7 +1,5 @@
 import colors from 'cli-color';
-import Debug from 'debug';
-
-const log = Debug('sol-merger:log');
+import { log } from '../lib/utils/logger';
 
 export function done(err?: any) {
   if (err) {

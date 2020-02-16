@@ -1,12 +1,15 @@
-import fs from 'fs-extra';
 import stripComments from 'strip-json-comments';
 import { ExportsAnalyzer, ExportsAnalyzerResult } from './exportsAnalyzer';
 import { RegistredImport } from './importRegistry';
-import { ImportsAnalyzerResult, ImportsAnalyzer } from './importsAnalyzer';
+import { ImportsAnalyzer, ImportsAnalyzerResult } from './importsAnalyzer';
+import { ContractResolver } from './resolvers/resolver';
 
 export class FileAnalyzer {
   filename: string;
   removeComments: boolean;
+
+  private contractResolver: ContractResolver;
+
   /**
    * Builds the function body depending on the export
    */
@@ -39,17 +42,22 @@ export class FileAnalyzer {
   /**
    * Filename to read to get contract data
    */
-  constructor(filename: string, removeComments: boolean = true) {
+  constructor(
+    contractResolver: ContractResolver,
+    filename: string,
+    removeComments: boolean = true,
+  ) {
     this.filename = filename;
     this.removeComments = removeComments;
+
+    this.contractResolver = contractResolver;
   }
 
   /**
    * Returns imports and exports of the processing file
    */
   async analyze(): Promise<FileAnalyzerResult> {
-    await fs.stat(this.filename);
-    let contents = await fs.readFile(this.filename, { encoding: 'utf-8' });
+    let contents = await this.contractResolver.getContent(this.filename);
     if (this.removeComments) {
       contents = stripComments(contents, { whitespace: false });
     }

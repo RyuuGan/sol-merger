@@ -1,15 +1,13 @@
 #!/usr/bin/env node
 
-import fs from 'fs-extra';
-import path from 'path';
-import glob from 'glob';
 import colors from 'cli-color';
-import Debug from 'debug';
-import { Merger } from '../lib/merger';
-import { done } from '../utils/done';
 import program from 'commander';
-
-const debug = Debug('sol-merger:debug');
+import fs from 'fs-extra';
+import glob from 'glob';
+import path from 'path';
+import { Merger } from '../lib/merger';
+import { debug } from '../lib/utils/logger';
+import { done } from '../utils/done';
 
 let inputGlob = '';
 let outputDir = '';

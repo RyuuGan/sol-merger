@@ -1,28 +1,23 @@
-import { exec } from 'child_process';
-import Debug from 'debug';
-import path from 'path';
 import { ExportsAnalyzerResult } from './exportsAnalyzer';
 import { FileAnalyzer, FileAnalyzerResult } from './fileAnalyzer';
 import { ImportsRegistry } from './importRegistry';
 import { ImportsAnalyzer, ImportsAnalyzerResult } from './importsAnalyzer';
-import { Utils } from './utils';
-
-const error = Debug('sol-merger:error');
-const debug = Debug('sol-merger:debug');
+import { FsContractResolver } from './resolvers/fsResolver';
+import { ContractResolver, ContractResolverCtor } from './resolvers/resolver';
+import { debug } from './utils/logger';
 
 export class Merger {
   delimeter: string = this.options.delimeter || '\n\n';
   removeComments: boolean;
 
   private importRegistry: ImportsRegistry;
-  nodeModulesRoot = '';
+  private contractResolver: ContractResolver;
 
   constructor(private options: SolMergerOptions = {}) {
-    if ('removeComments' in options) {
-      this.removeComments = options.removeComments as boolean;
-    } else {
-      this.removeComments = false;
-    }
+    this.removeComments = options.removeComments ?? false;
+
+    const Ctor = options.ContractResolver ?? FsContractResolver;
+    this.contractResolver = new Ctor();
 
     this.importRegistry = new ImportsRegistry();
   }
@@ -50,9 +45,9 @@ export class Merger {
     return contents.replace(this.getPragmaRegex(), '').trim();
   }
 
-  async init(file: string) {
+  async init() {
     this.importRegistry = new ImportsRegistry();
-    this.nodeModulesRoot = await this.getNodeModulesPath(file);
+    await this.contractResolver.init();
   }
 
   async processFile(
@@ -61,10 +56,14 @@ export class Merger {
     parentImport?: ImportsAnalyzerResult,
   ): Promise<string> {
     if (isRoot) {
-      await this.init(file);
+      await this.init();
     }
     if (this.importRegistry.isImportProcessed(parentImport?.importStatement)) {
-      debug('  %s Import statement already processed: %s', '⚠', parentImport?.importStatement);
+      debug(
+        '  %s Import statement already processed: %s',
+        '⚠',
+        parentImport?.importStatement,
+      );
       return '';
     }
     if (parentImport) {
@@ -74,6 +73,7 @@ export class Merger {
     debug('Processing file %s', file);
 
     const analyzedFile = await new FileAnalyzer(
+      this.contractResolver,
       file,
       this.removeComments,
     ).analyze();
@@ -110,11 +110,7 @@ export class Merger {
   async processImports(analyzedFile: FileAnalyzerResult): Promise<string[]> {
     const result: string[] = [];
     for (const i of analyzedFile.imports) {
-      let filePath = Utils.isRelative(i.file)
-        ? path.join(path.dirname(analyzedFile.filename), i.file)
-        : path.join(this.nodeModulesRoot, i.file);
-      filePath = path.normalize(filePath);
-
+      const filePath = this.contractResolver.getPath(analyzedFile, i);
       const contents = await this.processFile(filePath, false, i);
 
       if (contents) {
@@ -199,23 +195,10 @@ export class Merger {
   stripImports(contents: string): string {
     return contents.replace(this.getImportRegex(), '').trim();
   }
-
-  async getNodeModulesPath(file: string): Promise<string> {
-    return new Promise((resolve, reject) => {
-      exec('npm root', { cwd: path.dirname(file) }, (err, stdout) => {
-        if (err) {
-          error(
-            'Unable to find npm root directory. Make sure contract is inside npm package.',
-          );
-          return reject(err);
-        }
-        resolve(stdout.trim());
-      });
-    });
-  }
 }
 
 export interface SolMergerOptions {
   delimeter?: string;
   removeComments?: boolean;
+  ContractResolver?: ContractResolverCtor;
 }

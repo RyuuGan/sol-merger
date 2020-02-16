@@ -1,7 +1,5 @@
-import Debug from 'debug';
 import parser from 'solidity-parser-antlr';
-
-const error = Debug('sol-merger:error');
+import { error } from './utils/logger';
 
 export interface ExportsAnalyzerResult {
   type: 'contract' | 'library' | 'interface';
