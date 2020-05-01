@@ -15,7 +15,7 @@
   },
   "scripts": {
     "test": "mocha",
-    "build": "tsc -p tsconfig.app.json",
+    "build": "tsc --newLine lf -p tsconfig.app.json",
     "lint": "tslint -p tsconfig.app.json",
     "changelog": "npx conventional-changelog-cli -p angular -i CHANGELOG.md -s -r 0"
   },
