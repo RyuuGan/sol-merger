@@ -1,3 +1,5 @@
+import { SolidityExportVisitor } from './antlr/visitors/exportVisitor';
+import { SolidityImportVisitor } from './antlr/visitors/importVisitor';
 import { ExportsAnalyzer, ExportsAnalyzerResult } from './exportsAnalyzer';
 import { FileAnalyzer } from './fileAnalyzer';
 import {
@@ -12,6 +14,7 @@ const merge = async (file: string, options: SolMergerOptions = {}) => {
   return merger.processFile(file, true);
 };
 
+export * from './antlr/visitors/types';
 export {
   Merger,
   FileAnalyzer,
@@ -22,4 +25,6 @@ export {
   ImportsAnalyzer,
   ImportsAnalyzerResult,
   ImportsAnalyzerNamedImportResult,
+  SolidityExportVisitor,
+  SolidityImportVisitor,
 };
