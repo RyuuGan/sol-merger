@@ -2,7 +2,8 @@ import fs from 'fs-extra';
 import stripComments from 'strip-json-comments';
 import { ExportsAnalyzer, ExportsAnalyzerResult } from './exportsAnalyzer';
 import { RegistredImport } from './importRegistry';
-import { ImportsAnalyzerResult, ImportsAnalyzer } from './importsAnalyzer';
+import { ImportsAnalyzer, ImportsAnalyzerResult } from './importsAnalyzer';
+import { ExportType } from './types';
 
 export class FileAnalyzer {
   filename: string;
@@ -16,6 +17,10 @@ export class FileAnalyzer {
     newName: string | null,
     globalRenames: RegistredImport[],
   ): string {
+    if (e.type === ExportType.comment) {
+      return e.body;
+    }
+
     let is = e.is;
     if (is) {
       globalRenames.forEach((i) => {

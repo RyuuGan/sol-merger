@@ -1,4 +1,3 @@
-import parser from 'solidity-parser-antlr';
 import { Utils } from './utils';
 import { SolidityImportVisitor } from './antlr/visitors/importVisitor';
 import { ImportVisitResult } from './antlr/visitors/types';
@@ -38,17 +37,12 @@ export class ImportsAnalyzer {
    */
   analyzeImports(): ImportsAnalyzerResult[] {
     const imports: ImportsAnalyzerResult[] = [];
-    const ast = Utils.getAstNode(this.contents);
 
     const importDirectives: ImportVisitResult[] = [];
     const visitor = new SolidityImportVisitor(this.contents);
     visitor.visit((i) => {
       importDirectives.push(i);
     });
-
-    if (!ast) {
-      return [];
-    }
 
     for (const importDirective of importDirectives) {
       const analyzedImport = this.analyzeImport(importDirective);
@@ -65,7 +59,9 @@ export class ImportsAnalyzer {
    * 3. Extract filename from import
    *
    */
-  private analyzeImport(importVisitResult: ImportVisitResult): ImportsAnalyzerResult {
+  private analyzeImport(
+    importVisitResult: ImportVisitResult,
+  ): ImportsAnalyzerResult {
     return {
       file: importVisitResult.filename,
       globalRenameImport: importVisitResult.globalRename,

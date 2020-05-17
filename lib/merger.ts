@@ -5,6 +5,7 @@ import { ExportsAnalyzerResult } from './exportsAnalyzer';
 import { FileAnalyzer, FileAnalyzerResult } from './fileAnalyzer';
 import { ImportsRegistry } from './importRegistry';
 import { ImportsAnalyzer, ImportsAnalyzerResult } from './importsAnalyzer';
+import { ExportType } from './types';
 import { Utils } from './utils';
 
 const error = Debug('sol-merger:error');
@@ -64,7 +65,11 @@ export class Merger {
       await this.init(file);
     }
     if (this.importRegistry.isImportProcessed(parentImport?.importStatement)) {
-      debug('  %s Import statement already processed: %s', '⚠', parentImport?.importStatement);
+      debug(
+        '  %s Import statement already processed: %s',
+        '⚠',
+        parentImport?.importStatement,
+      );
       return '';
     }
     if (parentImport) {
@@ -150,6 +155,12 @@ export class Merger {
     );
 
     const shouldBeImported = (exportName: string) => {
+      if (
+        e.type === ExportType.comment &&
+        (isAllImport || isRenameGlobalImport)
+      ) {
+        return true;
+      }
       return (
         isAllImport ||
         isRenameGlobalImport ||
