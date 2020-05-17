@@ -39,7 +39,9 @@ export class FileAnalyzer {
         }
       });
     }
-    return `${e.type} ${newName || e.name} ${is}${e.body}`;
+
+    const abstract = e.abstact ? 'abstract ' : '';
+    return `${abstract}${e.type} ${newName || e.name} ${is}${e.body}`;
   }
   /**
    * Filename to read to get contract data

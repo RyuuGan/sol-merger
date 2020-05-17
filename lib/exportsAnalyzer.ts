@@ -5,6 +5,7 @@ import { ExportType } from './types';
 const error = Debug('sol-merger:error');
 
 export interface ExportsAnalyzerResult {
+  abstact: boolean;
   type: ExportType;
   name: string;
   is: string;
@@ -30,6 +31,7 @@ export class ExportsAnalyzer {
       const visitor = new SolidityExportVisitor(this.contents);
       visitor.visit((e) => {
         results.push({
+          abstact: e.abstract,
           type: e.type,
           name: e.name,
           body: this.contents.substring(e.body.start, e.body.end + 1).trim(),
