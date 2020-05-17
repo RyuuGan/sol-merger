@@ -1,5 +1,6 @@
 import { CharStreams, CommonTokenStream, Token } from 'antlr4ts';
 import { ParseTreeWalker } from 'antlr4ts/tree/ParseTreeWalker';
+import { ExportType } from '../../types';
 import { SolidityLexer } from '../generated/SolidityLexer';
 import { SolidityListener } from '../generated/SolidityListener';
 import {
@@ -10,7 +11,7 @@ import {
   SourceUnitContext,
   StructDefinitionContext,
 } from '../generated/SolidityParser';
-import { ExportType, ExportVisitResult, VisitCallback } from './types';
+import { ExportVisitResult, VisitCallback } from './types';
 
 const HIDDEN_CHANNEL = 1;
 
@@ -69,7 +70,7 @@ export class SolidityExportVisitor {
       this.#comments.length &&
       this.#comments[0].stopIndex < visitResult.end
     ) {
-      const skipped = this.#comments.shift();
+      this.#comments.shift();
     }
   }
 
@@ -92,7 +93,7 @@ export class SolidityExportVisitor {
       end: comment.stopIndex,
       is: null,
       name: `Comment#${comment.startIndex}`,
-      type: 'comment',
+      type: ExportType.comment,
     };
   }
 }
@@ -175,7 +176,7 @@ class ExportVisitor implements SolidityListener {
       start,
       end,
       abstract: false,
-      type: 'struct',
+      type: ExportType.struct,
       body: {
         start: bodyStart + 1,
         end,
@@ -211,7 +212,7 @@ class ExportVisitor implements SolidityListener {
       start,
       end,
       abstract: false,
-      type: 'enum',
+      type: ExportType.enum,
       body: {
         start: bodyStart + 1,
         end,
