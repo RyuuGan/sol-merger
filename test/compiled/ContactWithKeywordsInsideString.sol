@@ -20,6 +20,7 @@ contract ConflictingInheritance {
 
 }
 
+// This contract will not be detected
 contract B {
     uint private b;
 

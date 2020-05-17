@@ -83,6 +83,14 @@ describe('Solidity Merger', () => {
     await testFile('ImportStruct');
   });
 
+  it('should compile while when importing the struct', async () => {
+    await testFile('GlobalComments');
+  });
+
+  it('should compile abstract contracts', async () => {
+    await testFile('AbstractContract');
+  });
+
   it('should compile file without imports and exports (empty content)', async () => {
     const merger = new Merger();
     const file = path.join(__dirname, `/contracts/EmptyFile.sol`);

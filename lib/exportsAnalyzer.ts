@@ -1,11 +1,12 @@
 import Debug from 'debug';
-import parser from 'solidity-parser-antlr';
 import { SolidityExportVisitor } from './antlr/visitors/exportVisitor';
+import { ExportType } from './types';
 
 const error = Debug('sol-merger:error');
 
 export interface ExportsAnalyzerResult {
-  type: 'contract' | 'library' | 'interface' | 'struct' | 'enum';
+  abstact: boolean;
+  type: ExportType;
   name: string;
   is: string;
   body: string;
@@ -30,10 +31,13 @@ export class ExportsAnalyzer {
       const visitor = new SolidityExportVisitor(this.contents);
       visitor.visit((e) => {
         results.push({
+          abstact: e.abstract,
           type: e.type,
           name: e.name,
           body: this.contents.substring(e.body.start, e.body.end + 1).trim(),
-          is: e.is ? this.contents.substring(e.is.start, e.is.end + 1).trimLeft() : '',
+          is: e.is
+            ? this.contents.substring(e.is.start, e.is.end + 1).trimLeft()
+            : '',
         });
       });
       return results;
