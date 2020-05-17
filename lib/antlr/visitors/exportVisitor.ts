@@ -83,6 +83,7 @@ class ExportVisitor implements SolidityListener {
       name: name.text,
     });
   }
+
   enterStructDefinition(ctx: StructDefinitionContext) {
     if (!(ctx.parent instanceof SourceUnitContext)) {
       return;
