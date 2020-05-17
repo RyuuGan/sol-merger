@@ -71,6 +71,18 @@ describe('Solidity Merger', () => {
     await testFile('circular/Circular1');
   });
 
+  it('should compile while having struct', async () => {
+    await testFile('Struct');
+  });
+
+  it('should compile while having enum', async () => {
+    await testFile('Enum');
+  });
+
+  it('should compile while when importing the struct', async () => {
+    await testFile('ImportStruct');
+  });
+
   it('should compile file without imports and exports (empty content)', async () => {
     const merger = new Merger();
     const file = path.join(__dirname, `/contracts/EmptyFile.sol`);

@@ -18,6 +18,17 @@ describe('ExportsAnalyzer', () => {
         interface B {
           // i...
         }
+
+        struct S {
+          uint weight;
+          bool voted;
+        }
+
+        enum State {
+          Created,
+          Locked,
+          Inactive
+        }
       `);
       const exports = exportsAnalyzer.analyzeExports();
 
@@ -40,6 +51,19 @@ describe('ExportsAnalyzer', () => {
           name: 'B',
           is: '',
           body: '{\n          // i...\n        }',
+        },
+        {
+          body: '{\n          uint weight;\n          bool voted;\n        }',
+          is: '',
+          name: 'S',
+          type: 'struct',
+        },
+        {
+          body:
+            '{\n          Created,\n          Locked,\n          Inactive\n        }',
+          is: '',
+          name: 'State',
+          type: 'enum',
         },
       ]);
     });

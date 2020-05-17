@@ -17,6 +17,7 @@
     "test": "mocha",
     "build": "tsc --newLine lf -p tsconfig.app.json",
     "lint": "tslint -p tsconfig.app.json",
+    "antlr4ts": "antlr4ts -visitor Solidity.g4",
     "changelog": "npx conventional-changelog-cli -p angular -i CHANGELOG.md -s -r 0"
   },
   "bin": {
@@ -34,6 +35,7 @@
   "author": "Valery Aligorsky <stdammit@gmail.com>",
   "license": "BSD-2-Clause",
   "dependencies": {
+    "antlr4ts": "^0.5.0-alpha.3",
     "cli-color": "^1.4.0",
     "commander": "^4.0.1",
     "debug": "^4.1.1",
@@ -55,13 +57,14 @@
     "@types/fs-extra": "^7.0.0",
     "@types/mocha": "^5.2.7",
     "@types/strip-json-comments": "0.0.30",
+    "antlr4ts-cli": "^0.5.0-alpha.3",
     "chai": "^4.2.0",
-    "mocha": "^6.1.4",
+    "mocha": "^7.1.2",
     "openzeppelin-solidity": "^2.3.0",
     "ts-node": "^8.3.0",
     "tslib": "^1.10.0",
-    "tslint": "^5.17.0",
-    "typescript": "^3.7.4",
+    "tslint": "^6.1.2",
+    "typescript": "^3.9.2",
     "zeppelin-solidity": "^1.12.0"
   }
 }

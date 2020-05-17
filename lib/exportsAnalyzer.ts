@@ -1,10 +1,11 @@
 import Debug from 'debug';
 import parser from 'solidity-parser-antlr';
+import { SolidityExportVisitor } from './antlr/visitors/exportVisitor';
 
 const error = Debug('sol-merger:error');
 
 export interface ExportsAnalyzerResult {
-  type: 'contract' | 'library' | 'interface';
+  type: 'contract' | 'library' | 'interface' | 'struct' | 'enum';
   name: string;
   is: string;
   body: string;
@@ -25,36 +26,19 @@ export class ExportsAnalyzer {
    */
   analyzeExports(): ExportsAnalyzerResult[] {
     try {
-      const ast = parser.parse(this.contents, { loc: true, range: true });
       const results: ExportsAnalyzerResult[] = [];
-      const exportRegex = /(contract|library|interface)\s+([a-zA-Z_$][a-zA-Z_$0-9]*)\s*([\s\S]*?)\{/;
-      parser.visit(ast, {
-        ContractDefinition: (node) => {
-          if (!node.range) {
-            return;
-          }
-          const contract = this.contents.substring(
-            node.range[0],
-            node.range[1] + 1,
-          );
-          const group = exportRegex.exec(contract);
-          if (!group) {
-            return;
-          }
-          const [match, _, __, is] = group;
-          results.push({
-            is: is,
-            name: node.name,
-            type: node.kind as any,
-            body: contract.substring(match.length - 1),
-          });
-        },
+      const visitor = new SolidityExportVisitor(this.contents);
+      visitor.visit((e) => {
+        results.push({
+          type: e.type,
+          name: e.name,
+          body: this.contents.substring(e.body.start, e.body.end + 1).trim(),
+          is: e.is ? this.contents.substring(e.is.start, e.is.end + 1).trimLeft() : '',
+        });
       });
       return results;
     } catch (e) {
-      if (e instanceof (parser as any).ParserError) {
-        error(e.errors);
-      }
+      error(e);
       return [];
     }
   }
