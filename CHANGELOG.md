@@ -1,3 +1,17 @@
+# [3.0.0](https://github.com/RyuuGan/sol-merger/compare/v2.0.1...v3.0.0) (2020-05-17)
+
+
+### Features
+
+* **solidity:** add support for new solidity grammar ([0d530c0](https://github.com/RyuuGan/sol-merger/commit/0d530c0ad29f99aba617cc0ec73afb52b4890934)), closes [#32](https://github.com/RyuuGan/sol-merger/issues/32) [rkalis/truffle-plugin-verify#28](https://github.com/rkalis/truffle-plugin-verify/issues/28)
+
+
+### BREAKING CHANGES
+
+* **solidity:** ImportsAnalyzer analizeImport is now private
+
+
+
 ## [2.0.1](https://github.com/RyuuGan/sol-merger/compare/v2.0.0...v2.0.1) (2020-02-07)
 
 
