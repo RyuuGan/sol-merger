@@ -47,5 +47,8 @@
     "triple-equals": [true, "allow-null-check"],
     "unified-signatures": true,
     "variable-name": false
+  },
+  "linterOptions": {
+    "exclude": ["node_modules", "lib/antlr/generated/**/*", "dist"]
   }
 }

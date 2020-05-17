@@ -1,5 +1,7 @@
 import parser from 'solidity-parser-antlr';
 import { Utils } from './utils';
+import { SolidityImportVisitor } from './antlr/visitors/importVisitor';
+import { ImportVisitResult } from './antlr/visitors/types';
 
 export interface ImportsAnalyzerResult {
   importStatement: string;
@@ -38,24 +40,15 @@ export class ImportsAnalyzer {
     const imports: ImportsAnalyzerResult[] = [];
     const ast = Utils.getAstNode(this.contents);
 
+    const importDirectives: ImportVisitResult[] = [];
+    const visitor = new SolidityImportVisitor(this.contents);
+    visitor.visit((i) => {
+      importDirectives.push(i);
+    });
+
     if (!ast) {
       return [];
     }
-
-    const importDirectives: string[] = [];
-    parser.visit(ast, {
-      ImportDirective: (node) => {
-        if (!node || !node.range) {
-          return;
-        }
-        const importDirective = this.contents.substring(
-          node.range[0],
-          node.range[1] + 1,
-        );
-
-        importDirectives.push(importDirective);
-      },
-    });
 
     for (const importDirective of importDirectives) {
       const analyzedImport = this.analyzeImport(importDirective);
@@ -72,42 +65,15 @@ export class ImportsAnalyzer {
    * 3. Extract filename from import
    *
    */
-  analyzeImport(importStatement: string): ImportsAnalyzerResult {
-    const fileRegex = /['"](.+?)['"]/;
-    const group = fileRegex.exec(importStatement);
-    if (!group) {
-      throw new Error('Unknown import statement');
-    }
-    const file = group[1];
-    const globalRenameRegex = /.+\s+as\s+([a-zA-Z_$][a-zA-Z_$0-9]*);$|.+\*\s+as\s+([a-zA-Z_$][a-zA-Z_$0-9]*)\s+from.+;$/;
-    const renameGroup = globalRenameRegex.exec(importStatement);
-    const globalRenameImport =
-      renameGroup && (renameGroup[1] || renameGroup[2]);
-
-    const namedImportsRegex = /\{(.+)\}/;
-    const namedImportsGroup = namedImportsRegex.exec(importStatement);
-
-    const namedImports =
-      namedImportsGroup &&
-      namedImportsGroup[1].split(',').map((namedImport) => {
-        if (namedImport.indexOf('as') !== -1) {
-          const [name, as] = namedImport.trim().split(/\s+as\s+/);
-          return {
-            name,
-            as,
-          };
-        }
-        return {
-          name: namedImport.trim(),
-          as: null,
-        };
-      });
-
+  private analyzeImport(importVisitResult: ImportVisitResult): ImportsAnalyzerResult {
     return {
-      file,
-      importStatement,
-      globalRenameImport,
-      namedImports,
+      file: importVisitResult.filename,
+      globalRenameImport: importVisitResult.globalRename,
+      importStatement: this.contents.substring(
+        importVisitResult.start,
+        importVisitResult.end + 1,
+      ),
+      namedImports: importVisitResult.namedImports,
     };
   }
 }
