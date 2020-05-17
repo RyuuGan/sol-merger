@@ -52,7 +52,6 @@
     "url": "https://github.com/RyuuGan/sol-merger.git"
   },
   "devDependencies": {
-    "@types/antlr4": "^4.7.1",
     "@types/chai": "^4.1.7",
     "@types/debug": "^4.1.4",
     "@types/fs-extra": "^7.0.0",
