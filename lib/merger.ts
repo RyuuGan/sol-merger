@@ -13,6 +13,7 @@ const debug = Debug('sol-merger:debug');
 
 export class Merger {
   delimeter: string = this.options.delimeter || '\n\n';
+  commentsDelimeter: string = this.options.commentsDelimeter || '\n';
   removeComments: boolean;
 
   private importRegistry: ImportsRegistry;
@@ -106,7 +107,11 @@ export class Merger {
 
     const fileExports = await this.processExports(analyzedFile, parentImport);
     for (const e of fileExports) {
-      result += e + this.delimeter;
+      if (this.isComment(e)) {
+        result += e + this.commentsDelimeter;
+      } else {
+        result += e + this.delimeter;
+      }
     }
 
     return result.trimRight();
@@ -224,9 +229,14 @@ export class Merger {
       });
     });
   }
+
+  private isComment(str: string) {
+    return str.startsWith('//') || str.startsWith('/*');
+  }
 }
 
 export interface SolMergerOptions {
   delimeter?: string;
   removeComments?: boolean;
+  commentsDelimeter?: string;
 }
