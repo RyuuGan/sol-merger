@@ -1,3 +1,14 @@
+## [3.0.1](https://github.com/RyuuGan/sol-merger/compare/v3.0.0...v3.0.1) (2020-05-17)
+
+
+### Features
+
+* **abstract:** add support for abstract class ([555ffaf](https://github.com/RyuuGan/sol-merger/commit/555ffaf79f7d4871e5baa5247de67b7334ed2643))
+* **comments:** add global comments as exports ([bf0b6e4](https://github.com/RyuuGan/sol-merger/commit/bf0b6e41bd2984e183e41f988710a328eaeda4c3))
+* **comments:** add support for comments delimeter ([1db6cda](https://github.com/RyuuGan/sol-merger/commit/1db6cdabc3a0790023fd835d5fd8ed88d09ab4f3))
+
+
+
 # [3.0.0](https://github.com/RyuuGan/sol-merger/compare/v2.0.1...v3.0.0) (2020-05-17)
 
 
