@@ -68,11 +68,33 @@ describe('ExportsAnalyzer', () => {
       ]);
     });
 
-    it('should return empty array if there are no exports', () => {
+    it('should return comments array', () => {
       const exportsAnalyzer = new ExportsAnalyzer(`
         // Some contracts without exports
 
         // Some contract text that is not required here
+      `);
+      const exports = exportsAnalyzer.analyzeExports();
+
+      assert.deepEqual(exports, [
+        {
+          body: '// Some contracts without exports',
+          is: '',
+          name: 'Comment#9',
+          type: 'comment',
+        },
+        {
+          body: '// Some contract text that is not required here',
+          is: '',
+          name: 'Comment#52',
+          type: 'comment',
+        },
+      ]);
+    });
+
+    it('should return empty array if there are no exports', () => {
+      const exportsAnalyzer = new ExportsAnalyzer(`
+
       `);
       const exports = exportsAnalyzer.analyzeExports();
 

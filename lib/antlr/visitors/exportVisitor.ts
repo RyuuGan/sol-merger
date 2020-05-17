@@ -1,4 +1,4 @@
-import { CharStreams, CommonTokenStream } from 'antlr4ts';
+import { CharStreams, CommonTokenStream, Token } from 'antlr4ts';
 import { ParseTreeWalker } from 'antlr4ts/tree/ParseTreeWalker';
 import { SolidityLexer } from '../generated/SolidityLexer';
 import { SolidityListener } from '../generated/SolidityListener';
@@ -12,9 +12,12 @@ import {
 } from '../generated/SolidityParser';
 import { ExportType, ExportVisitResult, VisitCallback } from './types';
 
+const HIDDEN_CHANNEL = 1;
+
 export class SolidityExportVisitor {
   #inputContent: string;
   #antlrTree: SourceUnitContext;
+  #comments: Token[] = [];
   constructor(inputContent: string) {
     this.#inputContent = inputContent;
 
@@ -23,11 +26,74 @@ export class SolidityExportVisitor {
     const tokens = new CommonTokenStream(lexer);
     const parser = new SolidityParser(tokens);
     this.#antlrTree = parser.sourceUnit();
+
+    this.#comments = tokens
+      .getRange(0, tokens.size)
+      .filter((t) => t.channel === HIDDEN_CHANNEL);
   }
 
   visit(onVisit: VisitCallback<ExportVisitResult>) {
-    const listener: SolidityListener = new ExportVisitor(onVisit);
+    const listener: SolidityListener = new ExportVisitor((visitResult) => {
+      this.onVisit(visitResult, onVisit);
+    });
     ParseTreeWalker.DEFAULT.walk(listener, this.#antlrTree);
+    this.flushComments(onVisit);
+  }
+
+  private onVisit(
+    visitResult: ExportVisitResult,
+    onVisit: VisitCallback<ExportVisitResult>,
+  ) {
+    if (!this.#comments.length) {
+      return onVisit(visitResult);
+    }
+    this.emitCommentsBefore(visitResult, onVisit);
+    onVisit(visitResult);
+  }
+
+  private emitCommentsBefore(
+    visitResult: ExportVisitResult,
+    onVisit: VisitCallback<ExportVisitResult>,
+  ) {
+    while (
+      this.#comments.length &&
+      this.#comments[0].startIndex < visitResult.start
+    ) {
+      const comment = this.#comments.shift();
+      if (!comment) {
+        continue;
+      }
+      onVisit(this.buildComment(comment));
+    }
+    while (
+      this.#comments.length &&
+      this.#comments[0].stopIndex < visitResult.end
+    ) {
+      const skipped = this.#comments.shift();
+    }
+  }
+
+  private flushComments(onVisit: VisitCallback<ExportVisitResult>) {
+    if (!this.#comments.length) {
+      return;
+    }
+
+    this.#comments.forEach((comment) => onVisit(this.buildComment(comment)));
+  }
+
+  private buildComment(comment: Token): ExportVisitResult {
+    return {
+      abstract: false,
+      body: {
+        start: comment.startIndex,
+        end: comment.stopIndex,
+      },
+      start: comment.startIndex,
+      end: comment.stopIndex,
+      is: null,
+      name: `Comment#${comment.startIndex}`,
+      type: 'comment',
+    };
   }
 }
 

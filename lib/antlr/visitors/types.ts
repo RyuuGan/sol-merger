@@ -14,7 +14,7 @@ export interface ImportVisitNamedImport {
   as: string | null
 }
 
-export type ExportType = 'contract' | 'library' | 'interface' | 'struct' | 'enum';
+export type ExportType = 'contract' | 'library' | 'interface' | 'struct' | 'enum' | 'comment';
 
 export interface ExportVisitResult extends RangeVisitResult {
   abstract: boolean;

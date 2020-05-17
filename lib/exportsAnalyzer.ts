@@ -5,7 +5,7 @@ import { SolidityExportVisitor } from './antlr/visitors/exportVisitor';
 const error = Debug('sol-merger:error');
 
 export interface ExportsAnalyzerResult {
-  type: 'contract' | 'library' | 'interface' | 'struct' | 'enum';
+  type: 'contract' | 'library' | 'interface' | 'struct' | 'enum' | 'comment';
   name: string;
   is: string;
   body: string;

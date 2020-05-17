@@ -64,7 +64,11 @@ export class Merger {
       await this.init(file);
     }
     if (this.importRegistry.isImportProcessed(parentImport?.importStatement)) {
-      debug('  %s Import statement already processed: %s', '⚠', parentImport?.importStatement);
+      debug(
+        '  %s Import statement already processed: %s',
+        '⚠',
+        parentImport?.importStatement,
+      );
       return '';
     }
     if (parentImport) {
@@ -150,6 +154,9 @@ export class Merger {
     );
 
     const shouldBeImported = (exportName: string) => {
+      if (e.type === 'comment' && (isAllImport || isRenameGlobalImport)) {
+        return true;
+      }
       return (
         isAllImport ||
         isRenameGlobalImport ||
@@ -169,7 +176,7 @@ export class Merger {
       analyzedFile.filename,
       e.name,
       rename,
-    );
+    )
     if (isImported) {
       debug('%s Already imported: %s %s', '⚠', e.name, analyzedFile.filename);
       return [];

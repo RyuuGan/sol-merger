@@ -16,6 +16,10 @@ export class FileAnalyzer {
     newName: string | null,
     globalRenames: RegistredImport[],
   ): string {
+    if (e.type === 'comment') {
+      return e.body;
+    }
+
     let is = e.is;
     if (is) {
       globalRenames.forEach((i) => {
