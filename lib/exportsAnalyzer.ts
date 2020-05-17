@@ -1,5 +1,4 @@
 import Debug from 'debug';
-import parser from 'solidity-parser-antlr';
 import { SolidityExportVisitor } from './antlr/visitors/exportVisitor';
 import { ExportType } from './types';
 
