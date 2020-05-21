@@ -1,10 +1,11 @@
 import { assert } from 'chai';
 import path from 'path';
 import { merge, Merger } from '../lib/index';
+import { SPDXLicenseRemovePlugin } from '../lib/plugins';
 import { assertWithFile, testFile } from './utils';
 
 describe('Solidity Merger', () => {
-  it('should set default options', function() {
+  it('should set default options', function () {
     const merger = new Merger();
     assert.equal(
       merger.delimeter,
@@ -89,6 +90,12 @@ describe('Solidity Merger', () => {
 
   it('should compile abstract contracts', async () => {
     await testFile('AbstractContract');
+  });
+
+  it('should compile use plugins correctly', async () => {
+    await testFile('LocalImportsWithSPDX', {
+      exportPlugins: [SPDXLicenseRemovePlugin],
+    });
   });
 
   it('should compile file without imports and exports (empty content)', async () => {

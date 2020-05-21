@@ -5,8 +5,9 @@ import { ExportsAnalyzerResult } from './exportsAnalyzer';
 import { FileAnalyzer, FileAnalyzerResult } from './fileAnalyzer';
 import { ImportsRegistry } from './importRegistry';
 import { ImportsAnalyzer, ImportsAnalyzerResult } from './importsAnalyzer';
-import { ExportType } from './types';
+import { ExportType, ExportPluginCtor } from './types';
 import { Utils } from './utils';
+import { ExportPluginsRegistry } from './pluginsRegistry';
 
 const error = Debug('sol-merger:error');
 const debug = Debug('sol-merger:debug');
@@ -17,6 +18,7 @@ export class Merger {
   removeComments: boolean;
 
   private importRegistry: ImportsRegistry;
+  #pluginsRegistry: ExportPluginsRegistry;
   nodeModulesRoot = '';
 
   constructor(private options: SolMergerOptions = {}) {
@@ -27,6 +29,9 @@ export class Merger {
     }
 
     this.importRegistry = new ImportsRegistry();
+
+    const exportPlugins = options.exportPlugins || [];
+    this.#pluginsRegistry = new ExportPluginsRegistry(exportPlugins);
   }
 
   getPragmaRegex() {
@@ -195,9 +200,13 @@ export class Merger {
         rename = `${parentImport.globalRenameImport}$${e.name}`;
       }
       const globalRenames = this.importRegistry.getGlobalImports();
+      const newExport = this.#pluginsRegistry.processExport(e);
+      if (!newExport) {
+        return [];
+      }
       const body = FileAnalyzer.buildExportBody(
         analyzedFile,
-        e,
+        newExport,
         rename,
         globalRenames,
       );
@@ -239,4 +248,5 @@ export interface SolMergerOptions {
   delimeter?: string;
   removeComments?: boolean;
   commentsDelimeter?: string;
+  exportPlugins?: ExportPluginCtor[];
 }
