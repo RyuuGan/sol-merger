@@ -226,17 +226,7 @@ export class Merger {
   }
 
   async getNodeModulesPath(file: string): Promise<string> {
-    return new Promise((resolve, reject) => {
-      exec('npm root', { cwd: path.dirname(file) }, (err, stdout) => {
-        if (err) {
-          error(
-            'Unable to find npm root directory. Make sure contract is inside npm package.',
-          );
-          return reject(err);
-        }
-        resolve(stdout.trim());
-      });
-    });
+    return Utils.getNodeModulesPath(file);
   }
 
   private isComment(str: string) {

@@ -17,3 +17,7 @@ export interface ExportPluginProcessor {
 export type ExportPluginCtor<
   T extends ExportPluginProcessor = ExportPluginProcessor
 > = new () => T;
+
+export interface ExportPluginModule {
+  ExportPlugin: ExportPluginCtor
+}
