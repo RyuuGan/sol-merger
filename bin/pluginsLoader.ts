@@ -2,6 +2,7 @@ import Debug from 'debug';
 import path from 'path';
 import { ExportPluginCtor, ExportPluginModule } from '../lib/types';
 import { Utils } from '../lib/utils';
+import { plugins } from '../lib';
 
 const info = Debug('sol-merger:info');
 const error = Debug('sol-merger:error');
@@ -24,6 +25,11 @@ export class PluginsLoader {
   async getPlugins(): Promise<ExportPluginCtor[]> {
     const result: ExportPluginCtor[] = [];
     for (const pluginPath of this.#pluginPaths) {
+      const defaultPlugin = plugins[pluginPath];
+      if (defaultPlugin) {
+        result.push(defaultPlugin);
+        continue;
+      }
       const fullPluginPath = this.getPluginPath(pluginPath);
       if (!fullPluginPath) {
         continue;

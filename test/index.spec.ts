@@ -1,7 +1,7 @@
 import { assert } from 'chai';
 import path from 'path';
 import { merge, Merger } from '../lib/index';
-import { SPDXLicenseRemovePlugin } from '../lib/plugins';
+import { plugins } from '../lib/plugins';
 import { assertWithFile, testFile } from './utils';
 
 describe('Solidity Merger', () => {
@@ -93,8 +93,12 @@ describe('Solidity Merger', () => {
   });
 
   it('should compile use plugins correctly', async () => {
+    if (!plugins.SPDXLicenseRemovePlugin) {
+      assert.fail('SPDXLicenseRemovePlugin is not defined');
+      return;
+    }
     await testFile('LocalImportsWithSPDX', {
-      exportPlugins: [SPDXLicenseRemovePlugin],
+      exportPlugins: [plugins.SPDXLicenseRemovePlugin],
     });
   });
 

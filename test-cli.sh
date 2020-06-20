@@ -46,6 +46,11 @@ sol-merger --export-plugin ./dist/lib/plugins/SPDXLicenseRemovePlugin.js "test/c
 
 compareFile compiled/LocalImportsWithSPDX.sol
 
+rm -rf compiled
+sol-merger --export-plugin SPDXLicenseRemovePlugin "test/contracts/*.sol" compiled
+
+compareFile compiled/LocalImportsWithSPDX.sol
+
 # Remove Comments
 echo "Compilation with --remove-comments option"
 rm -rf compiled
