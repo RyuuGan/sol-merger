@@ -15,6 +15,8 @@ const merge = async (file: string, options: SolMergerOptions = {}) => {
 };
 
 export * from './antlr/visitors/types';
+export { plugins } from './plugins';
+
 export {
   Merger,
   FileAnalyzer,

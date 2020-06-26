@@ -1,13 +1,16 @@
 #!/usr/bin/env node
 
-import fs from 'fs-extra';
-import path from 'path';
-import glob from 'glob';
 import colors from 'cli-color';
-import Debug from 'debug';
-import { Merger } from '../lib/merger';
-import { done } from '../utils/done';
 import program from 'commander';
+import Debug from 'debug';
+import fs from 'fs-extra';
+import glob from 'glob';
+import path from 'path';
+import { Merger } from '../lib/merger';
+import { ExportPluginCtor } from '../lib/types';
+import { Utils } from '../lib/utils';
+import { done } from '../utils/done';
+import { PluginsLoader } from './pluginsLoader';
 
 const debug = Debug('sol-merger:debug');
 
@@ -18,6 +21,12 @@ let append = '';
 program
   .option('-a, --append [append]', '', /^([a-zA-Z_]+)$/)
   .option('-c, --remove-comments', `Remove comment from exports`, false)
+  .option(
+    '-p, --export-plugin [pathToPlugin]',
+    `Add post processor for exports`,
+    collectExportPluginOption,
+    [],
+  )
   .arguments('<glob> [outputDir]')
   .action((_glob, _outputDir) => {
     inputGlob = _glob;
@@ -41,6 +50,7 @@ if (outputDir) {
 
 debug('Output directory', outputDir);
 debug('RemoveComments?', program.removeComments);
+debug('ExportPlugins?', program.exportPlugin);
 
 glob(
   inputGlob,
@@ -59,14 +69,16 @@ async function execute(err: Error, files: string[]) {
   debug(files);
 
   if (files.length === 0) {
-    // eslint-disable-next-line
     console.log(colors.yellow('No files found for merge'));
   }
+
+  const exportPlugins = await getExportPlugins(program.exportPlugin);
 
   const promises = files.map(async (file) => {
     const merger = new Merger({
       delimeter: '\n\n',
       removeComments: program.removeComments,
+      exportPlugins,
     });
     let result: string;
     result = await merger.processFile(file, true);
@@ -87,4 +99,16 @@ async function execute(err: Error, files: string[]) {
   Promise.all(promises)
     .then(() => done())
     .catch(done);
+}
+
+function collectExportPluginOption(value: string, previousValue: string[]) {
+  return previousValue.concat([value]);
+}
+
+async function getExportPlugins(
+  plugins: string[],
+): Promise<ExportPluginCtor[]> {
+  const npmRoot = await Utils.getNodeModulesPath(process.cwd());
+  const loader = new PluginsLoader(plugins, npmRoot);
+  return loader.getPlugins();
 }

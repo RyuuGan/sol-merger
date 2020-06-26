@@ -15,10 +15,11 @@
   },
   "scripts": {
     "test": "mocha",
-    "build": "tsc --newLine lf -p tsconfig.app.json",
+    "build": "rm -r dist || true && tsc --newLine lf -p tsconfig.app.json",
     "lint": "tslint -p tsconfig.app.json",
     "antlr4ts": "antlr4ts -visitor Solidity.g4",
-    "changelog": "npx conventional-changelog-cli -p angular -i CHANGELOG.md -s -r 0"
+    "changelog": "npx conventional-changelog-cli -p angular -i CHANGELOG.md -s -r 0",
+    "version": "npx conventional-changelog-cli -p angular -i CHANGELOG.md -s && git add CHANGELOG.md"
   },
   "bin": {
     "sol-merger": "./dist/bin/sol-merger.js"
