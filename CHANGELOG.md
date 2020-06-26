@@ -1,3 +1,14 @@
+# [3.1.0](https://github.com/RyuuGan/sol-merger/compare/v3.0.1...v3.1.0) (2020-06-26)
+
+
+### Features
+
+* **cli:** add support for export plugins in cli ([663bb8a](https://github.com/RyuuGan/sol-merger/commit/663bb8a092d6c78d3907f5e73df6cbce8dc5ffdb))
+* **exports:** add plugins to post process exports ([4553fb7](https://github.com/RyuuGan/sol-merger/commit/4553fb7dcc0d2a1f53e90ae79412981a3c804dc6)), closes [#37](https://github.com/RyuuGan/sol-merger/issues/37)
+* **plugins:** add support for plugins shortcuts ([68e0301](https://github.com/RyuuGan/sol-merger/commit/68e030175f28185df8df29cb928930d2063ae6bd))
+
+
+
 ## [3.0.1](https://github.com/RyuuGan/sol-merger/compare/v3.0.0...v3.0.1) (2020-05-17)
 
 
