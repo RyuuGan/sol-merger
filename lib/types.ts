@@ -7,6 +7,7 @@ export enum ExportType {
   struct = 'struct',
   enum = 'enum',
   comment = 'comment',
+  error = 'error',
 }
 
 export interface ExportPluginProcessor {

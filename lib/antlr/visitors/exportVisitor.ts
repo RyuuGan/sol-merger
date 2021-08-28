@@ -6,7 +6,7 @@ import { SolidityParserListener } from '../generated/SolidityParserListener';
 import {
   ContractDefinitionContext,
   EnumDefinitionContext,
-  InheritanceSpecifierContext,
+  ErrorDefinitionContext,
   InheritanceSpecifierListContext,
   InterfaceDefinitionContext,
   LibraryDefinitionContext,
@@ -302,6 +302,42 @@ class ExportVisitor implements SolidityParserListener {
         end,
       },
       is: is,
+      name: name.text,
+    });
+  }
+
+  enterErrorDefinition(ctx: ErrorDefinitionContext): void {
+    if (!(ctx.parent instanceof SourceUnitContext)) {
+      return;
+    }
+
+    if (!ctx.stop) {
+      return;
+    }
+
+    if (!ctx.children) {
+      return;
+    }
+
+    const start = ctx.start.startIndex;
+    const end = ctx.stop.stopIndex;
+    const name = ctx.identifier();
+    if (!name?.stop) {
+      return;
+    }
+
+    const bodyStart = name.stop.stopIndex;
+
+    this.#onVisit({
+      start,
+      end,
+      abstract: false,
+      type: ExportType.error,
+      body: {
+        start: bodyStart + 1,
+        end,
+      },
+      is: null,
       name: name.text,
     });
   }

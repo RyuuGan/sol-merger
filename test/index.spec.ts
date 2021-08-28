@@ -112,4 +112,12 @@ describe('Solidity Merger', () => {
   it('should compile file with checked/unckecked arithmetic operations (0.8 support)', async () => {
     await testFile('CheckedUnchecked');
   });
+
+  it('should compile file with errors', async () => {
+    await testFile('ContractsWithErrors');
+  });
+
+  it('should compile file with events', async () => {
+    await testFile('ContractWithEvents');
+  });
 });
