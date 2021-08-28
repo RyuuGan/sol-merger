@@ -15,7 +15,7 @@ describe('ExportsAnalyzer', () => {
           // l...
         }
 
-        interface B {
+        interface I {
           // i...
         }
 
@@ -51,7 +51,7 @@ describe('ExportsAnalyzer', () => {
         {
           abstact: false,
           type: 'interface',
-          name: 'B',
+          name: 'I',
           is: '',
           body: '{\n          // i...\n        }',
         },

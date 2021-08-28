@@ -108,4 +108,8 @@ describe('Solidity Merger', () => {
     const merged = await merger.processFile(file, true);
     assert.equal(merged, '');
   });
+
+  it('should compile file with checked/unckecked arithmetic operations (0.8 support)', async () => {
+    await testFile('CheckedUnchecked');
+  });
 });

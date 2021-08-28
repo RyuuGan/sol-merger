@@ -17,7 +17,7 @@
     "test": "mocha",
     "build": "rm -r dist || true && tsc --newLine lf -p tsconfig.app.json",
     "lint": "tslint -p tsconfig.app.json",
-    "antlr4ts": "antlr4ts -visitor Solidity.g4",
+    "antlr4ts": "cd grammar && antlr4ts -visitor SolidityLexer.g4 SolidityParser.g4 -o ../lib/antlr/generated",
     "changelog": "npx conventional-changelog-cli -p angular -i CHANGELOG.md -s -r 0",
     "version": "npx conventional-changelog-cli -p angular -i CHANGELOG.md -s && git add CHANGELOG.md"
   },
