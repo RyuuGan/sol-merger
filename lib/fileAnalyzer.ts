@@ -1,7 +1,7 @@
 import fs from 'fs-extra';
 import stripComments from 'strip-json-comments';
 import { ExportsAnalyzer, ExportsAnalyzerResult } from './exportsAnalyzer';
-import { RegistredImport } from './importRegistry';
+import { RegisteredImport } from './importRegistry';
 import { ImportsAnalyzer, ImportsAnalyzerResult } from './importsAnalyzer';
 import { ExportType } from './types';
 
@@ -15,7 +15,7 @@ export class FileAnalyzer {
     analyzedFile: FileAnalyzerResult,
     e: ExportsAnalyzerResult,
     newName: string | null,
-    globalRenames: RegistredImport[],
+    globalRenames: RegisteredImport[],
   ): string {
     if (e.type === ExportType.comment) {
       return e.body;
