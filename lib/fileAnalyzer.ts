@@ -40,7 +40,7 @@ export class FileAnalyzer {
       });
     }
 
-    const abstract = e.abstact ? 'abstract ' : '';
+    const abstract = e.abstract ? 'abstract ' : '';
     return `${abstract}${e.type} ${newName || e.name} ${is}${e.body}`;
   }
   /**

@@ -9,7 +9,7 @@ describe('SPDXLicenseRemovePlugin', () => {
 
     const comment: ExportsAnalyzerResult = {
       type: ExportType.comment,
-      abstact: false,
+      abstract: false,
       body: `// SPDX-License-Identifier: MIT `,
       is: '',
       name: 'Test',
@@ -24,7 +24,7 @@ describe('SPDXLicenseRemovePlugin', () => {
 
     const comment: ExportsAnalyzerResult = {
       type: ExportType.comment,
-      abstact: false,
+      abstract: false,
       body: `/*
         SPDX-License-Identifier: MIT
         SPDX-License-Identifier: EPL-1.0+

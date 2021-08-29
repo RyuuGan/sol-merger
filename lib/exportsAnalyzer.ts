@@ -5,7 +5,7 @@ import { ExportType } from './types';
 const error = Debug('sol-merger:error');
 
 export interface ExportsAnalyzerResult {
-  abstact: boolean;
+  abstract: boolean;
   type: ExportType;
   name: string;
   is: string;
@@ -18,7 +18,7 @@ export class ExportsAnalyzer {
   /**
    * Analyzes all the exports of the file (Contract, Interface, Library)
    *
-   * Single export statement to process. Basicly it analizes next things:
+   * Single export statement to process. Basically it analyzes next things:
    *
    * 1. Get the type of the export
    * 2. Get the body of the export
@@ -31,7 +31,7 @@ export class ExportsAnalyzer {
       const visitor = new SolidityExportVisitor(this.contents);
       visitor.visit((e) => {
         results.push({
-          abstact: e.abstract,
+          abstract: e.abstract,
           type: e.type,
           name: e.name,
           body: this.contents.substring(e.body.start, e.body.end + 1).trim(),
