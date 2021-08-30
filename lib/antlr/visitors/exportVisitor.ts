@@ -120,10 +120,7 @@ class ExportVisitor implements SolidityParserListener {
     }
     const start = ctx.start.startIndex;
     const end = ctx.stop.stopIndex;
-    const abstract = ctx.children[0].text === 'abstract';
-    const type = abstract
-      ? (ctx.children[1].text as ContractLikeExportType)
-      : (ctx.children[0].text as ContractLikeExportType);
+    const abstract = ctx.Abstract() !== undefined;
     const name = ctx.identifier();
 
     const inheritance = ctx.getRuleContexts(InheritanceSpecifierListContext);
@@ -147,7 +144,7 @@ class ExportVisitor implements SolidityParserListener {
       start,
       end,
       abstract,
-      type,
+      type: ExportType.contract,
       body: {
         start: bodyStart + 1,
         end,
@@ -270,10 +267,6 @@ class ExportVisitor implements SolidityParserListener {
     }
     const start = ctx.start.startIndex;
     const end = ctx.stop.stopIndex;
-    const abstract = ctx.children[0].text === 'abstract';
-    const type = abstract
-      ? (ctx.children[1].text as ContractLikeExportType)
-      : (ctx.children[0].text as ContractLikeExportType);
     const name = ctx.identifier();
 
     const inheritance = ctx.getRuleContexts(InheritanceSpecifierListContext);
@@ -296,8 +289,8 @@ class ExportVisitor implements SolidityParserListener {
     this.#onVisit({
       start,
       end,
-      abstract,
-      type,
+      abstract: false,
+      type: ExportType.interface,
       body: {
         start: bodyStart + 1,
         end,
