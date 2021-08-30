@@ -1,15 +1,27 @@
 import Debug from 'debug';
 import { SolidityExportVisitor } from './antlr/visitors/exportVisitor';
-import { ExportType } from './types';
+import { ExportVisitResultConstant } from './antlr/visitors/types';
+import { ContractLikeExportType, ExportType } from './types';
 
 const error = Debug('sol-merger:error');
 
-export interface ExportsAnalyzerResult {
+export type ExportsAnalyzerResult =
+  | ExportsAnalyzerResultContractLike
+  | ExportsAnalyzerResultConstant;
+
+export interface ExportsAnalyzerResultContractLike {
   abstract: boolean;
-  type: ExportType;
+  type: ContractLikeExportType;
   name: string;
   is: string;
   body: string;
+}
+
+export interface ExportsAnalyzerResultConstant {
+  type: ExportType.constant;
+  name: string;
+  body: string;
+  typeName: string;
 }
 
 export class ExportsAnalyzer {
@@ -30,6 +42,11 @@ export class ExportsAnalyzer {
       const results: ExportsAnalyzerResult[] = [];
       const visitor = new SolidityExportVisitor(this.contents);
       visitor.visit((e) => {
+        if (e.type === ExportType.constant) {
+          const constantExport = this.analyzeExportConstant(e);
+          results.push(constantExport);
+          return;
+        }
         results.push({
           abstract: e.abstract,
           type: e.type,
@@ -45,5 +62,16 @@ export class ExportsAnalyzer {
       error(e);
       return [];
     }
+  }
+
+  private analyzeExportConstant(
+    e: ExportVisitResultConstant,
+  ): ExportsAnalyzerResultConstant {
+    return {
+      body: this.contents.substring(e.body.start, e.body.end + 1),
+      name: e.name,
+      type: ExportType.constant,
+      typeName: e.typeName,
+    };
   }
 }

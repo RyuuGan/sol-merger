@@ -20,6 +20,9 @@ export class FileAnalyzer {
     if (e.type === ExportType.comment) {
       return e.body;
     }
+    if (e.type === ExportType.constant) {
+      return `${e.typeName} ${e.type} ${e.name}${e.body}`;
+    }
 
     let is = e.is;
     if (is) {

@@ -120,4 +120,8 @@ describe('Solidity Merger', () => {
   it('should compile file with events', async () => {
     await testFile('ContractWithEvents');
   });
+
+  it('should compile file with constants at root level (0.8 support)', async () => {
+    await testFile('ContractWithConstants');
+  });
 });

@@ -1,9 +1,10 @@
 import { CharStreams, CommonTokenStream, Token } from 'antlr4ts';
 import { ParseTreeWalker } from 'antlr4ts/tree/ParseTreeWalker';
-import { ExportType } from '../../types';
+import { ContractLikeExportType, ExportType } from '../../types';
 import { SolidityLexer } from '../generated/SolidityLexer';
 import { SolidityParserListener } from '../generated/SolidityParserListener';
 import {
+  ConstantVariableDeclarationContext,
   ContractDefinitionContext,
   EnumDefinitionContext,
   ErrorDefinitionContext,
@@ -121,8 +122,8 @@ class ExportVisitor implements SolidityParserListener {
     const end = ctx.stop.stopIndex;
     const abstract = ctx.children[0].text === 'abstract';
     const type = abstract
-      ? (ctx.children[1].text as ExportType)
-      : (ctx.children[0].text as ExportType);
+      ? (ctx.children[1].text as ContractLikeExportType)
+      : (ctx.children[0].text as ContractLikeExportType);
     const name = ctx.identifier();
 
     const inheritance = ctx.getRuleContexts(InheritanceSpecifierListContext);
@@ -237,7 +238,7 @@ class ExportVisitor implements SolidityParserListener {
     }
     const start = ctx.start.startIndex;
     const end = ctx.stop.stopIndex;
-    const type = ctx.children[0].text as ExportType;
+    const type = ctx.children[0].text as ContractLikeExportType;
     const name = ctx.identifier();
 
     const bodyStart = name.stop?.stopIndex;
@@ -271,8 +272,8 @@ class ExportVisitor implements SolidityParserListener {
     const end = ctx.stop.stopIndex;
     const abstract = ctx.children[0].text === 'abstract';
     const type = abstract
-      ? (ctx.children[1].text as ExportType)
-      : (ctx.children[0].text as ExportType);
+      ? (ctx.children[1].text as ContractLikeExportType)
+      : (ctx.children[0].text as ContractLikeExportType);
     const name = ctx.identifier();
 
     const inheritance = ctx.getRuleContexts(InheritanceSpecifierListContext);
@@ -339,6 +340,43 @@ class ExportVisitor implements SolidityParserListener {
       },
       is: null,
       name: name.text,
+    });
+  }
+
+  enterConstantVariableDeclaration(
+    ctx: ConstantVariableDeclarationContext,
+  ): void {
+    if (!(ctx.parent instanceof SourceUnitContext)) {
+      return;
+    }
+
+    if (!ctx.stop) {
+      return;
+    }
+
+    if (!ctx.children) {
+      return;
+    }
+
+    const start = ctx.start.startIndex;
+    const end = ctx.stop.stopIndex;
+    const name = ctx.identifier();
+    const typeName = ctx.typeName();
+
+    if (!name.stop) {
+      return;
+    }
+
+    this.#onVisit({
+      type: ExportType.constant,
+      body: {
+        start: name.stop.stopIndex + 1,
+        end: ctx.stop.stopIndex,
+      },
+      start,
+      end,
+      name: name.text,
+      typeName: typeName.text,
     });
   }
 }
