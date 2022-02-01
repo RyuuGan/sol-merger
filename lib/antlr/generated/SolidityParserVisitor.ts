@@ -58,6 +58,7 @@ import { ReceiveFunctionDefinitionContext } from "./SolidityParser";
 import { StructDefinitionContext } from "./SolidityParser";
 import { StructMemberContext } from "./SolidityParser";
 import { EnumDefinitionContext } from "./SolidityParser";
+import { UserDefinedValueTypeDefinitionContext } from "./SolidityParser";
 import { StateVariableDeclarationContext } from "./SolidityParser";
 import { ConstantVariableDeclarationContext } from "./SolidityParser";
 import { EventParameterContext } from "./SolidityParser";
@@ -537,6 +538,13 @@ export interface SolidityParserVisitor<Result> extends ParseTreeVisitor<Result> 
 	 * @return the visitor result
 	 */
 	visitEnumDefinition?: (ctx: EnumDefinitionContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `SolidityParser.userDefinedValueTypeDefinition`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitUserDefinedValueTypeDefinition?: (ctx: UserDefinedValueTypeDefinitionContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `SolidityParser.stateVariableDeclaration`.
