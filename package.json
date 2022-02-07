@@ -40,7 +40,7 @@
     "cli-color": "^1.4.0",
     "commander": "^4.0.1",
     "debug": "^4.1.1",
-    "fs-extra": "^8.0.1",
+    "fs-extra": "^10.0.0",
     "glob": "^7.1.7",
     "strip-json-comments": "^3.0.1"
   },
@@ -54,7 +54,7 @@
   "devDependencies": {
     "@types/chai": "^4.3.0",
     "@types/debug": "^4.1.4",
-    "@types/fs-extra": "^7.0.0",
+    "@types/fs-extra": "^9.0.13",
     "@types/mocha": "^9.1.0",
     "@types/strip-json-comments": "0.0.30",
     "antlr4ts-cli": "^0.5.0-alpha.4",
