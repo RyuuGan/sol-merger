@@ -128,4 +128,8 @@ describe('Solidity Merger', () => {
   it('should compile file with functions at root level (0.8 support)', async () => {
     await testFile('ContractWithTopLevelFunction');
   });
+
+  it('should compile file with user defined types at root level (0.8 support)', async () => {
+    await testFile('ContractWithUserDefinitionType');
+  });
 });

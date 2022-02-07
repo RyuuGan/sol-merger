@@ -19,7 +19,8 @@ export interface ImportVisitNamedImport {
 export type ExportVisitResult =
   | ExportVisitResultContractLike
   | ExportVisitResultConstant
-  | ExportVisitResultFunction;
+  | ExportVisitResultFunction
+  | ExportVisitResultUserDefinedValueType;
 
 export interface ExportVisitResultContractLike extends RangeVisitResult {
   abstract: boolean;
@@ -38,6 +39,12 @@ export interface ExportVisitResultConstant extends RangeVisitResult {
 
 export interface ExportVisitResultFunction extends RangeVisitResult {
   type: ExportType.function;
+  name: string;
+}
+
+export interface ExportVisitResultUserDefinedValueType
+  extends RangeVisitResult {
+  type: ExportType.userDefinedValueType;
   name: string;
 }
 

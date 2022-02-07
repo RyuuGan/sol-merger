@@ -28,6 +28,10 @@ export class FileAnalyzer {
       return e.body;
     }
 
+    if (e.type === ExportType.userDefinedValueType) {
+      return e.body;
+    }
+
     let is = e.is;
     if (is) {
       globalRenames.forEach((i) => {

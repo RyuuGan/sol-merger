@@ -3,6 +3,7 @@ import { SolidityExportVisitor } from './antlr/visitors/exportVisitor';
 import {
   ExportVisitResultConstant,
   ExportVisitResultFunction,
+  ExportVisitResultUserDefinedValueType,
 } from './antlr/visitors/types';
 import { ContractLikeExportType, ExportType } from './types';
 
@@ -11,7 +12,8 @@ const error = Debug('sol-merger:error');
 export type ExportsAnalyzerResult =
   | ExportsAnalyzerResultContractLike
   | ExportsAnalyzerResultConstant
-  | ExportsAnalyzerResultFunction;
+  | ExportsAnalyzerResultFunction
+  | ExportsAnalyzerResultUserDefinedValueType;
 
 export interface ExportsAnalyzerResultContractLike {
   abstract: boolean;
@@ -30,6 +32,12 @@ export interface ExportsAnalyzerResultConstant {
 
 export interface ExportsAnalyzerResultFunction {
   type: ExportType.function;
+  name: string;
+  body: string;
+}
+
+export interface ExportsAnalyzerResultUserDefinedValueType {
+  type: ExportType.userDefinedValueType;
   name: string;
   body: string;
 }
@@ -61,6 +69,13 @@ export class ExportsAnalyzer {
         if (e.type === ExportType.function) {
           const functionExport = this.analyzeExportFunction(e);
           results.push(functionExport);
+          return;
+        }
+
+        if (e.type === ExportType.userDefinedValueType) {
+          const userDefinedValueTypeExport =
+            this.analyzeExportUserDefinedValueType(e);
+          results.push(userDefinedValueTypeExport);
           return;
         }
         results.push({
@@ -98,6 +113,16 @@ export class ExportsAnalyzer {
       body: this.contents.substring(e.start, e.end + 1),
       name: e.name,
       type: ExportType.function,
+    };
+  }
+
+  private analyzeExportUserDefinedValueType(
+    e: ExportVisitResultUserDefinedValueType,
+  ): ExportsAnalyzerResultUserDefinedValueType {
+    return {
+      body: this.contents.substring(e.start, e.end + 1),
+      name: e.name,
+      type: ExportType.userDefinedValueType,
     };
   }
 }

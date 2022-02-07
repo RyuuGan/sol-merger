@@ -167,5 +167,21 @@ describe('ExportsAnalyzer', () => {
         },
       ]);
     });
+
+    it('should analyze user defined value type export', () => {
+      const exportsAnalyzer = new ExportsAnalyzer(`
+        type Decimal18 is uint256;
+      `);
+
+      const exports = exportsAnalyzer.analyzeExports();
+
+      assert.deepEqual(exports, [
+        {
+          name: 'Decimal18',
+          type: ExportType.userDefinedValueType,
+          body: `type Decimal18 is uint256;`,
+        },
+      ]);
+    });
   });
 });

@@ -15,6 +15,7 @@ import {
   SolidityParser,
   SourceUnitContext,
   StructDefinitionContext,
+  UserDefinedValueTypeDefinitionContext,
 } from '../generated/SolidityParser';
 import { ExportVisitResult, VisitCallback } from './types';
 
@@ -393,6 +394,33 @@ class ExportVisitor implements SolidityParserListener {
 
     this.#onVisit({
       type: ExportType.function,
+      start,
+      end,
+      name: name.text,
+    });
+  }
+
+  enterUserDefinedValueTypeDefinition(
+    ctx: UserDefinedValueTypeDefinitionContext,
+  ): void {
+    if (!(ctx.parent instanceof SourceUnitContext)) {
+      return;
+    }
+
+    if (!ctx.stop) {
+      return;
+    }
+
+    const start = ctx.start.startIndex;
+    const end = ctx.stop.stopIndex;
+    const name = ctx.identifier();
+
+    if (!name?.stop) {
+      return;
+    }
+
+    this.#onVisit({
+      type: ExportType.userDefinedValueType,
       start,
       end,
       name: name.text,
