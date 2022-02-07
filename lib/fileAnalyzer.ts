@@ -24,6 +24,10 @@ export class FileAnalyzer {
       return `${e.typeName} ${e.type} ${e.name}${e.body}`;
     }
 
+    if (e.type === ExportType.function) {
+      return e.body;
+    }
+
     let is = e.is;
     if (is) {
       globalRenames.forEach((i) => {

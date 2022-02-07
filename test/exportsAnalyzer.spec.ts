@@ -145,5 +145,27 @@ describe('ExportsAnalyzer', () => {
 
       assert.deepEqual(exports, []);
     });
+
+    it('should analyze function export', () => {
+      const exportsAnalyzer = new ExportsAnalyzer(`
+        function sum(uint[] memory _arr) pure returns (uint s) {
+            for (uint i = 0; i < _arr.length; i++)
+                s += _arr[i];
+        }
+      `);
+
+      const exports = exportsAnalyzer.analyzeExports();
+
+      assert.deepEqual(exports, [
+        {
+          name: 'sum',
+          type: ExportType.function,
+          body: `function sum(uint[] memory _arr) pure returns (uint s) {
+            for (uint i = 0; i < _arr.length; i++)
+                s += _arr[i];
+        }`,
+        },
+      ]);
+    });
   });
 });

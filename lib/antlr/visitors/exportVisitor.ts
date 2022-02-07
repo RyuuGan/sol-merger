@@ -8,6 +8,7 @@ import {
   ContractDefinitionContext,
   EnumDefinitionContext,
   ErrorDefinitionContext,
+  FunctionDefinitionContext,
   InheritanceSpecifierListContext,
   InterfaceDefinitionContext,
   LibraryDefinitionContext,
@@ -370,6 +371,31 @@ class ExportVisitor implements SolidityParserListener {
       end,
       name: name.text,
       typeName: typeName.text,
+    });
+  }
+
+  enterFunctionDefinition(ctx: FunctionDefinitionContext): void {
+    if (!(ctx.parent instanceof SourceUnitContext)) {
+      return;
+    }
+
+    if (!ctx.stop) {
+      return;
+    }
+
+    const start = ctx.start.startIndex;
+    const end = ctx.stop.stopIndex;
+    const name = ctx.identifier();
+
+    if (!name?.stop) {
+      return;
+    }
+
+    this.#onVisit({
+      type: ExportType.function,
+      start,
+      end,
+      name: name.text,
     });
   }
 }

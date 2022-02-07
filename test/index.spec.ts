@@ -124,4 +124,8 @@ describe('Solidity Merger', () => {
   it('should compile file with constants at root level (0.8 support)', async () => {
     await testFile('ContractWithConstants');
   });
+
+  it('should compile file with functions at root level (0.8 support)', async () => {
+    await testFile('ContractWithTopLevelFunction');
+  });
 });

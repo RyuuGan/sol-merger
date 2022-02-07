@@ -18,7 +18,8 @@ export interface ImportVisitNamedImport {
 
 export type ExportVisitResult =
   | ExportVisitResultContractLike
-  | ExportVisitResultConstant;
+  | ExportVisitResultConstant
+  | ExportVisitResultFunction;
 
 export interface ExportVisitResultContractLike extends RangeVisitResult {
   abstract: boolean;
@@ -32,6 +33,11 @@ export interface ExportVisitResultConstant extends RangeVisitResult {
   type: ExportType.constant;
   body: RangeVisitResult;
   typeName: string;
+  name: string;
+}
+
+export interface ExportVisitResultFunction extends RangeVisitResult {
+  type: ExportType.function;
   name: string;
 }
 

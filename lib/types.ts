@@ -10,11 +10,12 @@ export enum ExportType {
   error = 'error',
   constant = 'constant',
   function = 'function',
+  userDefinedValueType = 'userDefinedValueType',
 }
 
 export type ContractLikeExportType = Exclude<
   ExportType,
-  ExportType.constant | ExportType.function
+  ExportType.constant | ExportType.function | ExportType.userDefinedValueType
 >;
 
 export interface ExportPluginProcessor {
