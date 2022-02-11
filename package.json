@@ -15,9 +15,12 @@
   },
   "scripts": {
     "test": "mocha",
-    "build": "rm -r dist || true && tsc --newLine lf -p tsconfig.app.json",
+    "test-docker": "npm run build && npm run build-docker && docker run sol-merger",
+    "build": "rimraf dist && tsc --newLine lf -p tsconfig.app.json",
     "lint": "tslint -p tsconfig.app.json",
     "antlr4ts": "cd grammar && antlr4ts -visitor SolidityLexer.g4 SolidityParser.g4 -o ../lib/antlr/generated",
+    "build-docker": "docker build -t sol-merger .",
+    "run-docker-interactive": "docker run -it sol-merger /bin/bash",
     "changelog": "npx conventional-changelog-cli -p angular -i CHANGELOG.md -s -r 0",
     "version": "npx conventional-changelog-cli -p angular -i CHANGELOG.md -s && git add CHANGELOG.md"
   },
@@ -60,11 +63,14 @@
     "antlr4ts-cli": "^0.5.0-alpha.4",
     "chai": "^4.3.6",
     "mocha": "^9.2.0",
+    "npm-cli-adduser": "1.1.4",
     "openzeppelin-solidity": "^2.3.0",
+    "rimraf": "^3.0.2",
     "ts-node": "^8.3.0",
     "tslib": "^2.3.1",
     "tslint": "^6.1.3",
     "typescript": "^4.5.5",
+    "verdaccio": "5.5.2",
     "zeppelin-solidity": "^1.12.0"
   }
 }
