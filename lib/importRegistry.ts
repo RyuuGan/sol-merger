@@ -1,4 +1,4 @@
-export interface RegistredImport {
+export interface RegisteredImport {
   file: string;
   name: string;
   as?: string | null;
@@ -7,7 +7,7 @@ export interface RegistredImport {
 
 export class ImportsRegistry {
   registeredImportStatements: string[] = [];
-  registeredImports: RegistredImport[] = [];
+  registeredImports: RegisteredImport[] = [];
 
   isImportProcessed(importStatement?: string): boolean {
     if (!importStatement) {
@@ -20,11 +20,11 @@ export class ImportsRegistry {
     this.registeredImportStatements.push(importStatement);
   }
 
-  registerImport(i: RegistredImport): void {
+  registerImport(i: RegisteredImport): void {
     this.registeredImports.push(i);
   }
 
-  getGlobalImports(): RegistredImport[] {
+  getGlobalImports(): RegisteredImport[] {
     return this.registeredImports.filter((i) => i.globalRename);
   }
 

@@ -1,7 +1,7 @@
 import fs from 'fs-extra';
 import stripComments from 'strip-json-comments';
 import { ExportsAnalyzer, ExportsAnalyzerResult } from './exportsAnalyzer';
-import { RegistredImport } from './importRegistry';
+import { RegisteredImport } from './importRegistry';
 import { ImportsAnalyzer, ImportsAnalyzerResult } from './importsAnalyzer';
 import { ExportType } from './types';
 
@@ -15,9 +15,20 @@ export class FileAnalyzer {
     analyzedFile: FileAnalyzerResult,
     e: ExportsAnalyzerResult,
     newName: string | null,
-    globalRenames: RegistredImport[],
+    globalRenames: RegisteredImport[],
   ): string {
     if (e.type === ExportType.comment) {
+      return e.body;
+    }
+    if (e.type === ExportType.constant) {
+      return `${e.typeName} ${e.type} ${e.name}${e.body}`;
+    }
+
+    if (e.type === ExportType.function) {
+      return e.body;
+    }
+
+    if (e.type === ExportType.userDefinedValueType) {
       return e.body;
     }
 
@@ -40,7 +51,7 @@ export class FileAnalyzer {
       });
     }
 
-    const abstract = e.abstact ? 'abstract ' : '';
+    const abstract = e.abstract ? 'abstract ' : '';
     return `${abstract}${e.type} ${newName || e.name} ${is}${e.body}`;
   }
   /**

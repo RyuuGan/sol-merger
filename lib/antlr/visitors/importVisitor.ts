@@ -1,14 +1,20 @@
 import { CharStreams, CommonTokenStream } from 'antlr4ts';
 import { ParseTreeWalker } from 'antlr4ts/tree/ParseTreeWalker';
 import { SolidityLexer } from '../generated/SolidityLexer';
-import { SolidityListener } from '../generated/SolidityListener';
+import { SolidityParserListener } from '../generated/SolidityParserListener';
 import {
   IdentifierContext,
-  ImportDeclarationContext,
+  ImportAliasesContext,
+  ImportDirectiveContext,
   SolidityParser,
   SourceUnitContext,
+  SymbolAliasesContext,
 } from '../generated/SolidityParser';
-import { ImportVisitResult, ImportVisitNamedImport, VisitCallback } from './types';
+import {
+  ImportVisitResult,
+  ImportVisitNamedImport,
+  VisitCallback,
+} from './types';
 
 export class SolidityImportVisitor {
   #inputContent: string;
@@ -24,18 +30,20 @@ export class SolidityImportVisitor {
   }
 
   visit(onVisit: VisitCallback<ImportVisitResult>) {
-    const listener: SolidityListener = new ImportDefinitionVisitor(onVisit);
+    const listener: SolidityParserListener = new ImportDefinitionVisitor(
+      onVisit,
+    );
     ParseTreeWalker.DEFAULT.walk(listener, this.#antlrTree);
   }
 }
 
-class ImportDefinitionVisitor implements SolidityListener {
+class ImportDefinitionVisitor implements SolidityParserListener {
   #onVisit: VisitCallback<ImportVisitResult>;
 
   constructor(onVisit: VisitCallback<ImportVisitResult>) {
     this.#onVisit = onVisit;
   }
-  enterImportDirective(ctx: ImportDeclarationContext) {
+  enterImportDirective(ctx: ImportDirectiveContext) {
     if (!ctx.children) {
       return;
     }
@@ -56,12 +64,15 @@ class ImportDefinitionVisitor implements SolidityListener {
     });
   }
 
-  private getFilename(ctx: ImportDeclarationContext): string {
-    const filename = ctx.getToken(SolidityParser.StringLiteralFragment, 0);
-    return filename.text.substring(1).substring(0, filename.text.length - 2);
+  private getFilename(ctx: ImportDirectiveContext): string {
+    const filename = ctx.path()?.text;
+    if (!filename) {
+      throw new Error('Unable to fid path of the import');
+    }
+    return filename.substring(1).substring(0, filename.length - 2);
   }
 
-  private getGlobalRename(ctx: ImportDeclarationContext): string | null {
+  private getGlobalRename(ctx: ImportDirectiveContext): string | null {
     if (!ctx.children?.length) {
       return null;
     }
@@ -79,24 +90,22 @@ class ImportDefinitionVisitor implements SolidityListener {
   }
 
   private getNamedImports(
-    ctx: ImportDeclarationContext,
+    ctx: ImportDirectiveContext,
   ): ImportVisitNamedImport[] | null {
-    const importDeclarations = ctx.getRuleContexts(ImportDeclarationContext);
+    const importAliases = ctx.symbolAliases()?.importAliases();
 
-    if (!importDeclarations.length) {
+    if (!importAliases) {
       return null;
     }
+
     const result: ImportVisitNamedImport[] = [];
-    importDeclarations.forEach((importDeclaration) => {
-      if (!importDeclaration.children) {
-        return;
-      }
+    importAliases.forEach((ia) => {
+      const [i, rename] = ia.identifier();
       result.push({
-        name: importDeclaration.children[0].text,
-        as: importDeclaration.children[2]?.text || null,
+        name: i.text,
+        as: rename?.text ?? null,
       });
     });
-
     return result;
   }
 }

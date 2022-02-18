@@ -108,4 +108,28 @@ describe('Solidity Merger', () => {
     const merged = await merger.processFile(file, true);
     assert.equal(merged, '');
   });
+
+  it('should compile file with checked/unckecked arithmetic operations (0.8 support)', async () => {
+    await testFile('CheckedUnchecked');
+  });
+
+  it('should compile file with errors', async () => {
+    await testFile('ContractsWithErrors');
+  });
+
+  it('should compile file with events', async () => {
+    await testFile('ContractWithEvents');
+  });
+
+  it('should compile file with constants at root level (0.8 support)', async () => {
+    await testFile('ContractWithConstants');
+  });
+
+  it('should compile file with functions at root level (0.8 support)', async () => {
+    await testFile('ContractWithTopLevelFunction');
+  });
+
+  it('should compile file with user defined types at root level (0.8 support)', async () => {
+    await testFile('ContractWithUserDefinitionType');
+  });
 });

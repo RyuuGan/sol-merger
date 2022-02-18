@@ -1,15 +1,21 @@
 import { CharStreams, CommonTokenStream, Token } from 'antlr4ts';
 import { ParseTreeWalker } from 'antlr4ts/tree/ParseTreeWalker';
-import { ExportType } from '../../types';
+import { ContractLikeExportType, ExportType } from '../../types';
 import { SolidityLexer } from '../generated/SolidityLexer';
-import { SolidityListener } from '../generated/SolidityListener';
+import { SolidityParserListener } from '../generated/SolidityParserListener';
 import {
+  ConstantVariableDeclarationContext,
   ContractDefinitionContext,
   EnumDefinitionContext,
-  InheritanceSpecifierContext,
+  ErrorDefinitionContext,
+  FunctionDefinitionContext,
+  InheritanceSpecifierListContext,
+  InterfaceDefinitionContext,
+  LibraryDefinitionContext,
   SolidityParser,
   SourceUnitContext,
   StructDefinitionContext,
+  UserDefinedValueTypeDefinitionContext,
 } from '../generated/SolidityParser';
 import { ExportVisitResult, VisitCallback } from './types';
 
@@ -34,9 +40,11 @@ export class SolidityExportVisitor {
   }
 
   visit(onVisit: VisitCallback<ExportVisitResult>) {
-    const listener: SolidityListener = new ExportVisitor((visitResult) => {
-      this.onVisit(visitResult, onVisit);
-    });
+    const listener: SolidityParserListener = new ExportVisitor(
+      (visitResult) => {
+        this.onVisit(visitResult, onVisit);
+      },
+    );
     ParseTreeWalker.DEFAULT.walk(listener, this.#antlrTree);
     this.flushComments(onVisit);
   }
@@ -98,14 +106,14 @@ export class SolidityExportVisitor {
   }
 }
 
-class ExportVisitor implements SolidityListener {
+class ExportVisitor implements SolidityParserListener {
   #onVisit: VisitCallback<ExportVisitResult>;
 
   constructor(onVisit: VisitCallback<ExportVisitResult>) {
     this.#onVisit = onVisit;
   }
 
-  enterContractDefinition(ctx: ContractDefinitionContext) {
+  enterContractDefinition(ctx: ContractDefinitionContext): void {
     if (!ctx.stop) {
       return;
     }
@@ -114,13 +122,10 @@ class ExportVisitor implements SolidityListener {
     }
     const start = ctx.start.startIndex;
     const end = ctx.stop.stopIndex;
-    const abstract = ctx.children[0].text === 'abstract';
-    const type = abstract
-      ? (ctx.children[1].text as ExportType)
-      : (ctx.children[0].text as ExportType);
+    const abstract = ctx.Abstract() !== undefined;
     const name = ctx.identifier();
 
-    const inheritance = ctx.getRuleContexts(InheritanceSpecifierContext);
+    const inheritance = ctx.getRuleContexts(InheritanceSpecifierListContext);
 
     const bodyStart = inheritance.length
       ? inheritance[inheritance.length - 1].stop?.stopIndex
@@ -141,7 +146,7 @@ class ExportVisitor implements SolidityListener {
       start,
       end,
       abstract,
-      type,
+      type: ExportType.contract,
       body: {
         start: bodyStart + 1,
         end,
@@ -151,7 +156,7 @@ class ExportVisitor implements SolidityListener {
     });
   }
 
-  enterStructDefinition(ctx: StructDefinitionContext) {
+  enterStructDefinition(ctx: StructDefinitionContext): void {
     if (!(ctx.parent instanceof SourceUnitContext)) {
       return;
     }
@@ -166,7 +171,7 @@ class ExportVisitor implements SolidityListener {
     const start = ctx.start.startIndex;
     const end = ctx.stop.stopIndex;
     const name = ctx.identifier();
-    if (!name.stop) {
+    if (!name?.stop) {
       return;
     }
 
@@ -186,7 +191,7 @@ class ExportVisitor implements SolidityListener {
     });
   }
 
-  enterEnumDefinition(ctx: EnumDefinitionContext) {
+  enterEnumDefinition(ctx: EnumDefinitionContext): void {
     if (!(ctx.parent instanceof SourceUnitContext)) {
       return;
     }
@@ -201,8 +206,9 @@ class ExportVisitor implements SolidityListener {
 
     const start = ctx.start.startIndex;
     const end = ctx.stop.stopIndex;
-    const name = ctx.identifier();
-    if (!name.stop) {
+    const names = ctx.identifier();
+    const name = names[0];
+    if (!name?.stop) {
       return;
     }
 
@@ -218,6 +224,205 @@ class ExportVisitor implements SolidityListener {
         end,
       },
       is: null,
+      name: name.text,
+    });
+  }
+
+  enterLibraryDefinition(ctx: LibraryDefinitionContext): void {
+    if (!ctx.stop) {
+      return;
+    }
+    if (!ctx.children) {
+      return;
+    }
+    const start = ctx.start.startIndex;
+    const end = ctx.stop.stopIndex;
+    const type = ctx.children[0].text as ContractLikeExportType;
+    const name = ctx.identifier();
+
+    const bodyStart = name.stop?.stopIndex;
+
+    if (!bodyStart) {
+      return;
+    }
+
+    this.#onVisit({
+      start,
+      end,
+      abstract: false,
+      type,
+      body: {
+        start: bodyStart + 1,
+        end,
+      },
+      is: null,
+      name: name.text,
+    });
+  }
+
+  enterInterfaceDefinition(ctx: InterfaceDefinitionContext): void {
+    if (!ctx.stop) {
+      return;
+    }
+    if (!ctx.children) {
+      return;
+    }
+    const start = ctx.start.startIndex;
+    const end = ctx.stop.stopIndex;
+    const name = ctx.identifier();
+
+    const inheritance = ctx.getRuleContexts(InheritanceSpecifierListContext);
+
+    const bodyStart = inheritance.length
+      ? inheritance[inheritance.length - 1].stop?.stopIndex
+      : name.stop?.stopIndex;
+
+    const isStart = inheritance.length ? name.stop?.stopIndex : null;
+    const isEnd = inheritance.length
+      ? inheritance[inheritance.length - 1].stop?.stopIndex
+      : null;
+
+    const is = isStart && isEnd ? { start: isStart + 1, end: isEnd + 1 } : null;
+
+    if (!bodyStart) {
+      return;
+    }
+
+    this.#onVisit({
+      start,
+      end,
+      abstract: false,
+      type: ExportType.interface,
+      body: {
+        start: bodyStart + 1,
+        end,
+      },
+      is: is,
+      name: name.text,
+    });
+  }
+
+  enterErrorDefinition(ctx: ErrorDefinitionContext): void {
+    if (!(ctx.parent instanceof SourceUnitContext)) {
+      return;
+    }
+
+    if (!ctx.stop) {
+      return;
+    }
+
+    if (!ctx.children) {
+      return;
+    }
+
+    const start = ctx.start.startIndex;
+    const end = ctx.stop.stopIndex;
+    const name = ctx.identifier();
+    if (!name?.stop) {
+      return;
+    }
+
+    const bodyStart = name.stop.stopIndex;
+
+    this.#onVisit({
+      start,
+      end,
+      abstract: false,
+      type: ExportType.error,
+      body: {
+        start: bodyStart + 1,
+        end,
+      },
+      is: null,
+      name: name.text,
+    });
+  }
+
+  enterConstantVariableDeclaration(
+    ctx: ConstantVariableDeclarationContext,
+  ): void {
+    if (!(ctx.parent instanceof SourceUnitContext)) {
+      return;
+    }
+
+    if (!ctx.stop) {
+      return;
+    }
+
+    if (!ctx.children) {
+      return;
+    }
+
+    const start = ctx.start.startIndex;
+    const end = ctx.stop.stopIndex;
+    const name = ctx.identifier();
+    const typeName = ctx.typeName();
+
+    if (!name.stop) {
+      return;
+    }
+
+    this.#onVisit({
+      type: ExportType.constant,
+      body: {
+        start: name.stop.stopIndex + 1,
+        end: ctx.stop.stopIndex,
+      },
+      start,
+      end,
+      name: name.text,
+      typeName: typeName.text,
+    });
+  }
+
+  enterFunctionDefinition(ctx: FunctionDefinitionContext): void {
+    if (!(ctx.parent instanceof SourceUnitContext)) {
+      return;
+    }
+
+    if (!ctx.stop) {
+      return;
+    }
+
+    const start = ctx.start.startIndex;
+    const end = ctx.stop.stopIndex;
+    const name = ctx.identifier();
+
+    if (!name?.stop) {
+      return;
+    }
+
+    this.#onVisit({
+      type: ExportType.function,
+      start,
+      end,
+      name: name.text,
+    });
+  }
+
+  enterUserDefinedValueTypeDefinition(
+    ctx: UserDefinedValueTypeDefinitionContext,
+  ): void {
+    if (!(ctx.parent instanceof SourceUnitContext)) {
+      return;
+    }
+
+    if (!ctx.stop) {
+      return;
+    }
+
+    const start = ctx.start.startIndex;
+    const end = ctx.stop.stopIndex;
+    const name = ctx.identifier();
+
+    if (!name?.stop) {
+      return;
+    }
+
+    this.#onVisit({
+      type: ExportType.userDefinedValueType,
+      start,
+      end,
       name: name.text,
     });
   }

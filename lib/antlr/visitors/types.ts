@@ -1,4 +1,4 @@
-import { ExportType } from '../../types';
+import { ContractLikeExportType, ExportType } from '../../types';
 
 export interface RangeVisitResult {
   start: number;
@@ -16,12 +16,36 @@ export interface ImportVisitNamedImport {
   as: string | null;
 }
 
-export interface ExportVisitResult extends RangeVisitResult {
+export type ExportVisitResult =
+  | ExportVisitResultContractLike
+  | ExportVisitResultConstant
+  | ExportVisitResultFunction
+  | ExportVisitResultUserDefinedValueType;
+
+export interface ExportVisitResultContractLike extends RangeVisitResult {
   abstract: boolean;
-  type: ExportType;
+  type: ContractLikeExportType;
   name: string;
   body: RangeVisitResult;
   is: RangeVisitResult | null;
+}
+
+export interface ExportVisitResultConstant extends RangeVisitResult {
+  type: ExportType.constant;
+  body: RangeVisitResult;
+  typeName: string;
+  name: string;
+}
+
+export interface ExportVisitResultFunction extends RangeVisitResult {
+  type: ExportType.function;
+  name: string;
+}
+
+export interface ExportVisitResultUserDefinedValueType
+  extends RangeVisitResult {
+  type: ExportType.userDefinedValueType;
+  name: string;
 }
 
 export type VisitCallback<T extends RangeVisitResult> = (v: T) => void;
