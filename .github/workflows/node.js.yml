@@ -18,6 +18,27 @@ jobs:
       matrix:
         node-version: [14.x, 16.x]
 
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    - run: npm ci
+    - run: npm run build --if-present
+    - run: npm test
+    - run: npm run lint
+    - run: npm publish --dry-run
+
+  testPublish:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [14.x, 16.x]
+
     env:
       NPM_REGISTRY_URL: http://localhost:4873
       NPM_USERNAME: admin
@@ -32,12 +53,8 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: npm ci
-    - run: npm run build --if-present
-    - run: npm test
-    - run: npm run lint
-    - run: npm publish --dry-run
     # run verdaccio and setup user
+    - run: npm i
     - run: ./node_modules/.bin/verdaccio &
     - run: sleep 1
     - run: ./node_modules/.bin/npm-cli-adduser --registry $NPM_REGISTRY_URL --username $NPM_USERNAME --password $NPM_PASSWORD --email $NPM_EMAIL --scope $NPM_SCOPE
@@ -48,4 +65,4 @@ jobs:
     - run: npm publish --registry $NPM_REGISTRY_URL
     # install and run tests
     - run: npm i -g "@$NPM_SCOPE/sol-merger@latest" --registry $NPM_REGISTRY_URL
-    - run: /bin/bash ./test-cli.sh
+    - run: ./test-cli.sh
