@@ -39,13 +39,6 @@ jobs:
       matrix:
         node-version: [14.x]
 
-    env:
-      NPM_REGISTRY_URL: http://localhost:4873
-      NPM_USERNAME: admin
-      NPM_PASSWORD: admin
-      NPM_EMAIL: admin@example.com
-      NPM_SCOPE: test-org
-
     steps:
     - uses: actions/checkout@v2
     - name: Use Node.js ${{ matrix.node-version }}

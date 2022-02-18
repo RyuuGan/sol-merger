@@ -9,6 +9,6 @@ ENV NPM_USERNAME=admin
 ENV NPM_PASSWORD=admin
 ENV NPM_EMAIL=admin@example.com
 ENV NPM_SCOPE=test-org
+RUN ["chmod", "+x", "/sol-merger/test-docker-entrypoint.sh"]
 RUN npm i
-# RUN npm run build
 CMD /sol-merger/test-docker-entrypoint.sh
