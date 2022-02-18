@@ -37,7 +37,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [14.x, 16.x]
+        node-version: [14.x]
 
     env:
       NPM_REGISTRY_URL: http://localhost:4873
@@ -53,16 +53,5 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    # run verdaccio and setup user
-    - run: npm i
-    - run: ./node_modules/.bin/verdaccio &
-    - run: sleep 1
-    - run: ./node_modules/.bin/npm-cli-adduser --registry $NPM_REGISTRY_URL --username $NPM_USERNAME --password $NPM_PASSWORD --email $NPM_EMAIL --scope $NPM_SCOPE
-    # update
-    - run: npm whoami --registry $NPM_REGISTRY_URL
-    - run: |
-        sed -i -r "s/\"name\": \"sol-merger\"/\"name\": \"@$NPM_SCOPE\/sol-merger\"/" package.json
-    - run: npm publish --registry $NPM_REGISTRY_URL
-    # install and run tests
-    - run: npm i -g "@$NPM_SCOPE/sol-merger@latest" --registry $NPM_REGISTRY_URL
-    - run: ./test-cli.sh
+    - run: npm ci
+    - run: npm run test-docker
