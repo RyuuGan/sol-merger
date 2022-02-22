@@ -1,4 +1,5 @@
 import { assert } from 'chai';
+import { ExportType } from '../lib/types';
 import { ExportsAnalyzer } from '../lib/exportsAnalyzer';
 
 describe('ExportsAnalyzer', () => {
@@ -15,7 +16,7 @@ describe('ExportsAnalyzer', () => {
           // l...
         }
 
-        interface B {
+        interface I {
           // i...
         }
 
@@ -33,42 +34,47 @@ describe('ExportsAnalyzer', () => {
       const exports = exportsAnalyzer.analyzeExports();
 
       assert.deepEqual(exports, [
-        { abstact: false, type: 'contract', name: 'A', is: '', body: '{ }' },
         {
-          abstact: false,
-          type: 'contract',
+          abstract: false,
+          type: ExportType.contract,
+          name: 'A',
+          is: '',
+          body: '{ }',
+        },
+        {
+          abstract: false,
+          type: ExportType.contract,
           name: 'B',
           is: 'is A ',
           body: '{\n          // some body here...\n        }',
         },
         {
-          abstact: false,
-          type: 'library',
+          abstract: false,
+          type: ExportType.library,
           name: 'L',
           is: '',
           body: '{\n          // l...\n        }',
         },
         {
-          abstact: false,
-          type: 'interface',
-          name: 'B',
+          abstract: false,
+          type: ExportType.interface,
+          name: 'I',
           is: '',
           body: '{\n          // i...\n        }',
         },
         {
-          abstact: false,
+          abstract: false,
           body: '{\n          uint weight;\n          bool voted;\n        }',
           is: '',
           name: 'S',
-          type: 'struct',
+          type: ExportType.struct,
         },
         {
-          abstact: false,
-          body:
-            '{\n          Created,\n          Locked,\n          Inactive\n        }',
+          abstract: false,
+          body: '{\n          Created,\n          Locked,\n          Inactive\n        }',
           is: '',
           name: 'State',
-          type: 'enum',
+          type: ExportType.enum,
         },
       ]);
     });
@@ -83,18 +89,50 @@ describe('ExportsAnalyzer', () => {
 
       assert.deepEqual(exports, [
         {
-          abstact: false,
+          abstract: false,
           body: '// Some contracts without exports',
           is: '',
           name: 'Comment#9',
-          type: 'comment',
+          type: ExportType.comment,
         },
         {
-          abstact: false,
+          abstract: false,
           body: '// Some contract text that is not required here',
           is: '',
           name: 'Comment#52',
-          type: 'comment',
+          type: ExportType.comment,
+        },
+      ]);
+    });
+
+    it('should return constants array', () => {
+      const exportsAnalyzer = new ExportsAnalyzer(`
+        uint constant X = 32**22 + 8;
+
+        string constant text = "abc";
+
+        bytes32 constant myHash = keccak256("abc");
+      `);
+      const exports = exportsAnalyzer.analyzeExports();
+
+      assert.deepEqual(exports, [
+        {
+          body: ' = 32**22 + 8;',
+          name: 'X',
+          type: ExportType.constant,
+          typeName: 'uint',
+        },
+        {
+          body: ' = "abc";',
+          name: 'text',
+          type: ExportType.constant,
+          typeName: 'string',
+        },
+        {
+          body: ' = keccak256("abc");',
+          name: 'myHash',
+          type: ExportType.constant,
+          typeName: 'bytes32',
         },
       ]);
     });
@@ -106,6 +144,44 @@ describe('ExportsAnalyzer', () => {
       const exports = exportsAnalyzer.analyzeExports();
 
       assert.deepEqual(exports, []);
+    });
+
+    it('should analyze function export', () => {
+      const exportsAnalyzer = new ExportsAnalyzer(`
+        function sum(uint[] memory _arr) pure returns (uint s) {
+            for (uint i = 0; i < _arr.length; i++)
+                s += _arr[i];
+        }
+      `);
+
+      const exports = exportsAnalyzer.analyzeExports();
+
+      assert.deepEqual(exports, [
+        {
+          name: 'sum',
+          type: ExportType.function,
+          body: `function sum(uint[] memory _arr) pure returns (uint s) {
+            for (uint i = 0; i < _arr.length; i++)
+                s += _arr[i];
+        }`,
+        },
+      ]);
+    });
+
+    it('should analyze user defined value type export', () => {
+      const exportsAnalyzer = new ExportsAnalyzer(`
+        type Decimal18 is uint256;
+      `);
+
+      const exports = exportsAnalyzer.analyzeExports();
+
+      assert.deepEqual(exports, [
+        {
+          name: 'Decimal18',
+          type: ExportType.userDefinedValueType,
+          body: `type Decimal18 is uint256;`,
+        },
+      ]);
     });
   });
 });

@@ -13,9 +13,12 @@ SKIPPED=(
 compareFile() {
   local file="$1";
   echo "Comparing file: $file"
+  perl -pi -e 'chomp if eof' "test/$file"
+  perl -pi -e 'chomp if eof' "$file"
   cmp -s $file test/$file;
   if [ $? -ne 0 ]
   then
+    echo "FAILED: $file"
     exit 1
   fi
 }
