@@ -1,3 +1,31 @@
+# [4.0.0](https://github.com/RyuuGan/sol-merger/compare/v3.1.0...v4.0.0) (2022-02-22)
+
+
+### Bug Fixes
+
+* **types:** fix typo in the Type name, RegisteredImport ([18481aa](https://github.com/RyuuGan/sol-merger/commit/18481aa6b0d8ad778f97d9480342d508c7ffb41b))
+* **typos:** fix typo in ExportsAnalyzerResult abstract property ([ba01183](https://github.com/RyuuGan/sol-merger/commit/ba01183b4e10e16fbcc01c09df21d9a0ba4182c6))
+
+
+### Features
+
+* **grammar:** update grammar to support 0.8.11 version ([63487f3](https://github.com/RyuuGan/sol-merger/commit/63487f37c98d82f289bea46fc408eb039d755858))
+* **sol-0.8:** add support for errors exports ([7061943](https://github.com/RyuuGan/sol-merger/commit/7061943d520bbaaa14fbad4cd54e74a248f02456))
+* **sol-0.8:** add support for export of constants at root level ([1925195](https://github.com/RyuuGan/sol-merger/commit/1925195d09151c487a675613ddd4b5ced23a80e5))
+* **sol-0.8:** add support for export of function at root level ([7a9e2db](https://github.com/RyuuGan/sol-merger/commit/7a9e2db313519d32c5229fcceab398909743b389))
+* **sol-0.8:** add support for export of user defined types at root level ([6ae568b](https://github.com/RyuuGan/sol-merger/commit/6ae568bce126d0b48781ad9c426f93ce124719ae))
+* **testing:** add testing in docker environment ([30fcfa8](https://github.com/RyuuGan/sol-merger/commit/30fcfa8ff2a626cad046cec4a3aabcdc371a9972))
+* update node.js version ([4eb7990](https://github.com/RyuuGan/sol-merger/commit/4eb7990e5eb68f76d6dfec1febded5cc700f5897))
+
+
+### BREAKING CHANGES
+
+* lower node.js versions will not be supported
+* **typos:** rename abstact to abstract
+* **types:** has to import another type of needed.
+
+
+
 # [3.1.0](https://github.com/RyuuGan/sol-merger/compare/v3.0.1...v3.1.0) (2020-06-26)
 
 
