@@ -1,5 +1,5 @@
 ### Build status
-[![Build status](https://travis-ci.org/RyuuGan/sol-merger.svg?branch=master)](https://travis-ci.org/RyuuGan/sol-merger)
+![Build status](https://github.com/RyuuGan/sol-merger/actions/workflows/node.js.yml/badge.svg)
 
 ### Quick Usage
 
