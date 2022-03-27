@@ -16,6 +16,7 @@ import {
   SourceUnitContext,
   StructDefinitionContext,
   UserDefinedValueTypeDefinitionContext,
+  UsingDirectiveContext,
 } from '../generated/SolidityParser';
 import { ExportVisitResult, VisitCallback } from './types';
 
@@ -424,6 +425,30 @@ class ExportVisitor implements SolidityParserListener {
       start,
       end,
       name: name.text,
+    });
+  }
+
+  enterUsingDirective(ctx: UsingDirectiveContext): void {
+    if (!(ctx.parent instanceof SourceUnitContext)) {
+      return;
+    }
+
+    if (!ctx.stop) {
+      return;
+    }
+
+    const start = ctx.start.startIndex;
+    const end = ctx.stop.stopIndex;
+    const names = ctx.identifierPath();
+
+    const name =
+      names.map((n) => n.text).join(',') + `$${ExportType.usingDirective}`;
+
+    this.#onVisit({
+      type: ExportType.usingDirective,
+      start,
+      end,
+      name,
     });
   }
 }
