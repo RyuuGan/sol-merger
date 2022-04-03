@@ -20,7 +20,8 @@ export type ExportVisitResult =
   | ExportVisitResultContractLike
   | ExportVisitResultConstant
   | ExportVisitResultFunction
-  | ExportVisitResultUserDefinedValueType;
+  | ExportVisitResultUserDefinedValueType
+  | ExportVisitResultUsingDirective;
 
 export interface ExportVisitResultContractLike extends RangeVisitResult {
   abstract: boolean;
@@ -45,6 +46,11 @@ export interface ExportVisitResultFunction extends RangeVisitResult {
 export interface ExportVisitResultUserDefinedValueType
   extends RangeVisitResult {
   type: ExportType.userDefinedValueType;
+  name: string;
+}
+
+export interface ExportVisitResultUsingDirective extends RangeVisitResult {
+  type: ExportType.usingDirective;
   name: string;
 }
 

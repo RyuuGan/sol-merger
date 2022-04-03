@@ -11,11 +11,15 @@ export enum ExportType {
   constant = 'constant',
   function = 'function',
   userDefinedValueType = 'userDefinedValueType',
+  usingDirective = 'usingDirective',
 }
 
 export type ContractLikeExportType = Exclude<
   ExportType,
-  ExportType.constant | ExportType.function | ExportType.userDefinedValueType
+  | ExportType.constant
+  | ExportType.function
+  | ExportType.userDefinedValueType
+  | ExportType.usingDirective
 >;
 
 export interface ExportPluginProcessor {

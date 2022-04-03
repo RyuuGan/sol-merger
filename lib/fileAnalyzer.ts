@@ -32,6 +32,10 @@ export class FileAnalyzer {
       return e.body;
     }
 
+    if (e.type === ExportType.usingDirective) {
+      return e.body;
+    }
+
     let is = e.is;
     if (is) {
       globalRenames.forEach((i) => {

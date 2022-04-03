@@ -4,6 +4,7 @@ import {
   ExportVisitResultConstant,
   ExportVisitResultFunction,
   ExportVisitResultUserDefinedValueType,
+  ExportVisitResultUsingDirective,
 } from './antlr/visitors/types';
 import { ContractLikeExportType, ExportType } from './types';
 
@@ -13,7 +14,8 @@ export type ExportsAnalyzerResult =
   | ExportsAnalyzerResultContractLike
   | ExportsAnalyzerResultConstant
   | ExportsAnalyzerResultFunction
-  | ExportsAnalyzerResultUserDefinedValueType;
+  | ExportsAnalyzerResultUserDefinedValueType
+  | ExportsAnalyzerResultUsingDirective;
 
 export interface ExportsAnalyzerResultContractLike {
   abstract: boolean;
@@ -38,6 +40,12 @@ export interface ExportsAnalyzerResultFunction {
 
 export interface ExportsAnalyzerResultUserDefinedValueType {
   type: ExportType.userDefinedValueType;
+  name: string;
+  body: string;
+}
+
+export interface ExportsAnalyzerResultUsingDirective {
+  type: ExportType.usingDirective;
   name: string;
   body: string;
 }
@@ -76,6 +84,11 @@ export class ExportsAnalyzer {
           const userDefinedValueTypeExport =
             this.analyzeExportUserDefinedValueType(e);
           results.push(userDefinedValueTypeExport);
+          return;
+        }
+        if (e.type === ExportType.usingDirective) {
+          const usingDirectiveExport = this.analyzeUsingDirective(e);
+          results.push(usingDirectiveExport);
           return;
         }
         results.push({
@@ -123,6 +136,16 @@ export class ExportsAnalyzer {
       body: this.contents.substring(e.start, e.end + 1),
       name: e.name,
       type: ExportType.userDefinedValueType,
+    };
+  }
+
+  private analyzeUsingDirective(
+    e: ExportVisitResultUsingDirective,
+  ): ExportsAnalyzerResultUsingDirective {
+    return {
+      body: this.contents.substring(e.start, e.end + 1),
+      name: e.name,
+      type: ExportType.usingDirective,
     };
   }
 }

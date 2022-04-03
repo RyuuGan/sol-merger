@@ -1,3 +1,13 @@
+# [4.1.0](https://github.com/RyuuGan/sol-merger/compare/v4.0.0...v4.1.0) (2022-04-03)
+
+
+### Features
+
+* **grammar:** update grammar to support using directive at root scope ([2579237](https://github.com/RyuuGan/sol-merger/commit/257923703faaf36f6b86f7c16ec69ea1c6432e16))
+* **using-for:** add support for Using-For at root level ([fac2708](https://github.com/RyuuGan/sol-merger/commit/fac2708055161b456b037fd29231608278b0b764))
+
+
+
 # [4.0.0](https://github.com/RyuuGan/sol-merger/compare/v3.1.0...v4.0.0) (2022-02-22)
 
 

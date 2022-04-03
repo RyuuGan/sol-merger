@@ -98,6 +98,7 @@ import { ReturnStatementContext } from "./SolidityParser";
 import { EmitStatementContext } from "./SolidityParser";
 import { RevertStatementContext } from "./SolidityParser";
 import { AssemblyStatementContext } from "./SolidityParser";
+import { AssemblyFlagsContext } from "./SolidityParser";
 import { VariableDeclarationListContext } from "./SolidityParser";
 import { VariableDeclarationTupleContext } from "./SolidityParser";
 import { VariableDeclarationStatementContext } from "./SolidityParser";
@@ -1221,6 +1222,17 @@ export interface SolidityParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitAssemblyStatement?: (ctx: AssemblyStatementContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `SolidityParser.assemblyFlags`.
+	 * @param ctx the parse tree
+	 */
+	enterAssemblyFlags?: (ctx: AssemblyFlagsContext) => void;
+	/**
+	 * Exit a parse tree produced by `SolidityParser.assemblyFlags`.
+	 * @param ctx the parse tree
+	 */
+	exitAssemblyFlags?: (ctx: AssemblyFlagsContext) => void;
 
 	/**
 	 * Enter a parse tree produced by `SolidityParser.variableDeclarationList`.
