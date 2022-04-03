@@ -1,6 +1,6 @@
 {
   "name": "sol-merger",
-  "version": "4.1.0",
+  "version": "4.1.1",
   "description": "Merges all import files into single file.",
   "main": "./dist/lib/index.js",
   "types": "./dist/lib/index.d.ts",
