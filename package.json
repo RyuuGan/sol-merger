@@ -22,6 +22,7 @@
     "build-docker": "docker build -t sol-merger .",
     "run-docker-interactive": "docker run -it sol-merger /bin/bash",
     "changelog": "npx conventional-changelog-cli -p angular -i CHANGELOG.md -s -r 0",
+    "prepublishOnly": "npm run build",
     "version": "npx conventional-changelog-cli -p angular -i CHANGELOG.md -s && git add CHANGELOG.md"
   },
   "bin": {
