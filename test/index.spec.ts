@@ -132,4 +132,8 @@ describe('Solidity Merger', () => {
   it('should compile file with user defined types at root level (0.8 support)', async () => {
     await testFile('ContractWithUserDefinitionType');
   });
+
+  it('should compile file with using directive at root level (0.8.13 support)', async () => {
+    await testFile('UsingDirectiveContract');
+  });
 });
