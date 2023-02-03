@@ -1,5 +1,5 @@
 {
   "timeout": false,
-  "spec": "**/*.spec.ts",
+  "spec": "test/**/*.spec.ts",
   "require": "ts-node/register"
 }

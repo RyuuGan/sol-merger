@@ -19,6 +19,10 @@ compareFile() {
   if [ $? -ne 0 ]
   then
     echo "FAILED: $file"
+    echo ">>>>> $file"
+    cat $file
+    echo -e "\n>>>> test/$file"
+    cat test/$file
     exit 1
   fi
 }
