@@ -1,3 +1,17 @@
+# [4.2.0](https://github.com/RyuuGan/sol-merger/compare/v4.1.1...v4.2.0) (2023-02-04)
+
+
+### Features
+
+* **grammar:** update to new grammar 0.8.18 ([7a454c7](https://github.com/RyuuGan/sol-merger/commit/7a454c7497c0fc575a537499a74cad62091097b3))
+
+
+### Reverts
+
+* Revert "chore: add build on prepublishOnly" ([1891c55](https://github.com/RyuuGan/sol-merger/commit/1891c550f5596c73290dc5950d715fafc91b8927))
+
+
+
 ## [4.1.1](https://github.com/RyuuGan/sol-merger/compare/v4.1.0...v4.1.1) (2022-04-03)
 
 
