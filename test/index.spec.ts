@@ -140,4 +140,8 @@ describe('Solidity Merger', () => {
   it('should compile file with block.prevrandao in body (0.8.18 support)', async () => {
     await testFile('PrevrandaoContract');
   });
+
+  it('should compile file with user defined operators (0.8.19 support)', async () => {
+    await testFile('UserDefinedOperators');
+  });
 });

@@ -1,3 +1,12 @@
+# [4.3.0](https://github.com/RyuuGan/sol-merger/compare/v4.2.0...v4.3.0) (2023-02-24)
+
+
+### Features
+
+* **grammar:** update grammar to 0.8.19 ([5708118](https://github.com/RyuuGan/sol-merger/commit/5708118b001a961bd817c1375611029dec4145b4))
+
+
+
 # [4.2.0](https://github.com/RyuuGan/sol-merger/compare/v4.1.1...v4.2.0) (2023-02-04)
 
 

@@ -65,6 +65,7 @@ import { EventParameterContext } from "./SolidityParser";
 import { EventDefinitionContext } from "./SolidityParser";
 import { ErrorParameterContext } from "./SolidityParser";
 import { ErrorDefinitionContext } from "./SolidityParser";
+import { UserDefinableOperatorContext } from "./SolidityParser";
 import { UsingDirectiveContext } from "./SolidityParser";
 import { TypeNameContext } from "./SolidityParser";
 import { ElementaryTypeNameContext } from "./SolidityParser";
@@ -588,6 +589,13 @@ export interface SolidityParserVisitor<Result> extends ParseTreeVisitor<Result> 
 	 * @return the visitor result
 	 */
 	visitErrorDefinition?: (ctx: ErrorDefinitionContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `SolidityParser.userDefinableOperator`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitUserDefinableOperator?: (ctx: UserDefinableOperatorContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `SolidityParser.usingDirective`.
