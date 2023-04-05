@@ -1,6 +1,7 @@
 import { exec } from 'child_process';
 import Debug from 'debug';
 import path from 'path';
+import fs from 'fs'
 import { ExportsAnalyzerResult } from './exportsAnalyzer';
 import { FileAnalyzer, FileAnalyzerResult } from './fileAnalyzer';
 import { ImportsRegistry } from './importRegistry';
@@ -125,12 +126,22 @@ export class Merger {
   async processImports(analyzedFile: FileAnalyzerResult): Promise<string[]> {
     const result: string[] = [];
     for (const i of analyzedFile.imports) {
-      let filePath = Utils.isRelative(i.file)
-        ? path.join(path.dirname(analyzedFile.filename), i.file)
-        : path.join(this.nodeModulesRoot, i.file);
+      let filePath = "";
+      if (Utils.isRelative(i.file)) {
+        filePath = path.join(path.dirname(analyzedFile.filename), i.file)
+      } else {
+        // right now /importsolfile can have following two possible places:
+        // 1. <PWD>/importsolfile          (etherscan)
+        // 2. <NPM ROOT>/importsolfile     (npm project)
+        // let us try cwd first, and then try node_modules
+        filePath = path.join(process.cwd(), i.file)
+        if(!fs.existsSync(filePath)){
+          filePath = path.join(this.nodeModulesRoot, i.file);
+        }
+      }
       filePath = path.normalize(filePath);
 
-      const contents = await this.processFile(filePath, false, i);
+      const contents = await this.processFile(filePath!, false, i);
 
       if (contents) {
         result.push(contents);
