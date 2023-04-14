@@ -8,7 +8,10 @@ WITHOUT_COMMENTS=(
 SKIPPED=(
   compiled/EmptyFile.sol
   compiled/LocalImportsWithSPDX.sol
+  compiled/ImportWithAdditionalRoot.sol
 )
+
+PROCESSED_GLOB="test/contracts/!(ImportWithAdditionalRoot).sol"
 
 compareFile() {
   local file="$1";
@@ -30,7 +33,7 @@ compareFile() {
 # Compare files with comments
 
 rm -rf compiled
-sol-merger "test/contracts/*.sol" compiled
+sol-merger "$PROCESSED_GLOB" compiled
 
 echo "Default compilation (with comments)"
 
@@ -49,19 +52,25 @@ done
 # Remove SPDX Plugin
 echo "Compilation with plugins"
 rm -rf compiled
-sol-merger --export-plugin ./dist/lib/plugins/SPDXLicenseRemovePlugin.js "test/contracts/*.sol" compiled
+sol-merger --export-plugin ./dist/lib/plugins/SPDXLicenseRemovePlugin.js "$PROCESSED_GLOB" compiled
 
 compareFile compiled/LocalImportsWithSPDX.sol
 
 rm -rf compiled
-sol-merger --export-plugin SPDXLicenseRemovePlugin "test/contracts/*.sol" compiled
+sol-merger --export-plugin SPDXLicenseRemovePlugin "$PROCESSED_GLOB" compiled
 
 compareFile compiled/LocalImportsWithSPDX.sol
+
+echo "Compilation with --additional-root option"
+rm -rf compiled
+sol-merger --additional-root "./test/contracts/imports" "test/contracts/ImportWithAdditionalRoot.sol" compiled
+
+compareFile compiled/ImportWithAdditionalRoot.sol
 
 # Remove Comments
 echo "Compilation with --remove-comments option"
 rm -rf compiled
-sol-merger --remove-comments "test/contracts/*.sol" compiled
+sol-merger --remove-comments "$PROCESSED_GLOB" compiled
 
 for file in "${WITHOUT_COMMENTS[@]}"
 do

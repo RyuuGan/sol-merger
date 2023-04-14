@@ -144,4 +144,19 @@ describe('Solidity Merger', () => {
   it('should compile file with user defined operators (0.8.19 support)', async () => {
     await testFile('UserDefinedOperators');
   });
+
+  it('should compile file with additional roots defined', async () => {
+    await testFile('ImportWithAdditionalRoot', {
+      additionalRoots: ['./test/contracts/imports'],
+    });
+  });
+
+  it('should not compile file without additional roots defined', async () => {
+    try {
+      await testFile('ImportWithAdditionalRoot', {});
+      assert.equal(true, false, 'Should never happen');
+    } catch (e) {
+      assert.isOk(e);
+    }
+  });
 });
