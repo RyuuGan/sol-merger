@@ -1,4 +1,5 @@
 ### Build status
+
 ![Build status](https://github.com/RyuuGan/sol-merger/actions/workflows/node.js.yml/badge.svg)
 
 ### Quick Usage
@@ -7,7 +8,7 @@
 const { merge } = require('sol-merger');
 
 // Get the merged code as a string
-const mergedCode = await merge("./contracts/MyContract.sol");
+const mergedCode = await merge('./contracts/MyContract.sol');
 // Print it out or write it to a file etc.
 console.log(mergedCode);
 ```
@@ -29,7 +30,7 @@ Then add following line to your `package.json`.
 {
   "scripts": {
     "build-contracts": "sol-merger \"./contracts/*.sol\" ./build"
-  },
+  }
 }
 ```
 
@@ -45,6 +46,7 @@ change this behaviour by specifying `--append` option:
 sol-merger --append _me "./contracts/*.sol"
 sol-merger -a _me "./contracts/*.sol"
 ```
+
 You may need to use `npm run` to invoke the program standalone, as in `npm run sol-merger`.
 
 You can also get help via `--help` command
@@ -80,6 +82,31 @@ sol-merger --export-plugin sol-merger/lib/plugins/SPDXLicenseRemovePlugin.js "te
 ```
 
 Note that file extension is required for plugin to be loaded.
+
+# Additional root folders for searching contracts
+
+By default, `sol-merger` only searches for contracts in the `node_modules` folder.
+However, you can include additional root folders to search for contracts.
+This can be done by passing a CLI argument or a parameter through the code.
+
+If additional root folders are specified, `sol-merger` will first search for
+the contract in the `node_modules` folder and then in the additional root folders.
+Multiple folders can be included by passing a CLI argument multiple times.
+
+Example of usage in CLI:
+
+```sh
+sol-merger --additional-root "./test/contracts/imports" "test/contracts/ImportWithAdditionalRoot.sol" compiled
+```
+
+Example of usage in code:
+
+```ts
+const merger = new Merger({
+  delimeter: '\n\n',
+  additionalRoots: ['./test/contracts/imports'],
+});
+```
 
 # Debuging
 

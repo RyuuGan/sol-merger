@@ -1,6 +1,6 @@
-import { exec } from 'child_process';
 import Debug from 'debug';
 import path from 'path';
+import { promises as fs, constants } from 'fs';
 import { ExportsAnalyzerResult } from './exportsAnalyzer';
 import { FileAnalyzer, FileAnalyzerResult } from './fileAnalyzer';
 import { ImportsRegistry } from './importRegistry';
@@ -20,6 +20,8 @@ export class Merger {
   private importRegistry: ImportsRegistry;
   #pluginsRegistry: ExportPluginsRegistry;
   nodeModulesRoot = '';
+  #additionalRoots: string[];
+  #fileRoots: string[];
 
   constructor(private options: SolMergerOptions = {}) {
     if ('removeComments' in options) {
@@ -32,6 +34,7 @@ export class Merger {
 
     const exportPlugins = options.exportPlugins || [];
     this.#pluginsRegistry = new ExportPluginsRegistry(exportPlugins);
+    this.#additionalRoots = options.additionalRoots ?? [];
   }
 
   getPragmaRegex() {
@@ -60,6 +63,7 @@ export class Merger {
   async init(file: string) {
     this.importRegistry = new ImportsRegistry();
     this.nodeModulesRoot = await this.getNodeModulesPath(file);
+    this.#fileRoots = [this.nodeModulesRoot, ...this.#additionalRoots];
   }
 
   async processFile(
@@ -127,7 +131,7 @@ export class Merger {
     for (const i of analyzedFile.imports) {
       let filePath = Utils.isRelative(i.file)
         ? path.join(path.dirname(analyzedFile.filename), i.file)
-        : path.join(this.nodeModulesRoot, i.file);
+        : await this.getRootPath(i.file);
       filePath = path.normalize(filePath);
 
       const contents = await this.processFile(filePath, false, i);
@@ -137,6 +141,19 @@ export class Merger {
       }
     }
     return result;
+  }
+
+  private async getRootPath(nonRelativePath: string): Promise<string> {
+    for (const root of this.#fileRoots) {
+      const filePath = path.join(root, nonRelativePath);
+      try {
+        await fs.access(filePath, constants.R_OK);
+        return filePath;
+      } catch {
+        debug('File %s does is not readable in root directory %s', nonRelativePath, root);
+      }
+    }
+    return path.join(this.nodeModulesRoot, nonRelativePath);
   }
 
   async processExports(
@@ -239,4 +256,5 @@ export interface SolMergerOptions {
   removeComments?: boolean;
   commentsDelimeter?: string;
   exportPlugins?: ExportPluginCtor[];
+  additionalRoots?: string[];
 }
