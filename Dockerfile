@@ -1,4 +1,4 @@
-from node:16-stretch
+FROM node:16-stretch
 
 WORKDIR /sol-merger
 COPY test-cli.sh test-docker-entrypoint.sh package.json package-lock.json tsconfig.json tsconfig.app.json tslint.json ./

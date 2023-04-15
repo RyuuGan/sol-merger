@@ -24,7 +24,13 @@ program
   .option(
     '-p, --export-plugin [pathToPlugin]',
     `Add post processor for exports`,
-    collectExportPluginOption,
+    collectArrayOptions,
+    [],
+  )
+  .option(
+    '-r, --additional-root [pathToRoot]',
+    `Add additional root to search contracts in`,
+    collectArrayOptions,
     [],
   )
   .arguments('<glob> [outputDir]')
@@ -49,8 +55,9 @@ if (outputDir) {
 }
 
 debug('Output directory', outputDir);
-debug('RemoveComments?', program.removeComments);
-debug('ExportPlugins?', program.exportPlugin);
+debug('Remove comments?', program.removeComments);
+debug('Export plugins', program.exportPlugin);
+debug('Additional roots', program.additionalRoot);
 
 glob(
   inputGlob,
@@ -79,6 +86,7 @@ async function execute(err: Error, files: string[]) {
       delimeter: '\n\n',
       removeComments: program.removeComments,
       exportPlugins,
+      additionalRoots: program.additionalRoot,
     });
     let result: string;
     result = await merger.processFile(file, true);
@@ -101,7 +109,7 @@ async function execute(err: Error, files: string[]) {
     .catch(done);
 }
 
-function collectExportPluginOption(value: string, previousValue: string[]) {
+function collectArrayOptions(value: string, previousValue: string[]) {
   return previousValue.concat([value]);
 }
 
