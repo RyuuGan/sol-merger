@@ -312,10 +312,30 @@ errorDefinition:
 	Semicolon;
 
 /**
- * Using directive to bind library functions and free functions to types.
+ * Operators that users are allowed to implement for some types with `using for`.
+ */
+userDefinableOperator:
+	BitAnd
+	| BitNot
+	| BitOr
+	| BitXor
+	| Add
+	| Div
+	| Mod
+	| Mul
+	| Sub
+	| Equal
+	| GreaterThan
+	| GreaterThanOrEqual
+	| LessThan
+	| LessThanOrEqual
+	| NotEqual;
+
+/**
+ * Using directive to attach library functions and free functions to types.
  * Can occur within contracts and libraries and at the file level.
  */
-usingDirective: Using (identifierPath | (LBrace identifierPath (Comma identifierPath)* RBrace)) For (Mul | typeName) Global? Semicolon;
+usingDirective: Using (identifierPath | (LBrace identifierPath (As userDefinableOperator)? (Comma identifierPath (As userDefinableOperator)?)* RBrace)) For (Mul | typeName) Global? Semicolon;
 /**
  * A type name can be an elementary type, a function type, a mapping type, a user-defined type
  * (e.g. a contract or struct) or an array type.
@@ -504,7 +524,7 @@ variableDeclarationTuple:
 variableDeclarationStatement: ((variableDeclaration (Assign expression)?) | (variableDeclarationTuple Assign expression)) Semicolon;
 expressionStatement: expression Semicolon;
 
-mappingType: Mapping LParen key=mappingKeyType DoubleArrow value=typeName RParen;
+mappingType: Mapping LParen key=mappingKeyType name=identifier? DoubleArrow value=typeName name=identifier? RParen;
 /**
  * Only elementary types or user defined types are viable as mapping keys.
  */

@@ -1,3 +1,35 @@
+# [4.4.0](https://github.com/RyuuGan/sol-merger/compare/v4.3.0...v4.4.0) (2023-04-15)
+
+
+### Features
+
+* **sol-merger:** add support for additional roots for resolving contracts ([a4447fa](https://github.com/RyuuGan/sol-merger/commit/a4447fa69b097ee79af985f25f0a4c7fbffad720))
+
+
+
+# [4.3.0](https://github.com/RyuuGan/sol-merger/compare/v4.2.0...v4.3.0) (2023-02-24)
+
+
+### Features
+
+* **grammar:** update grammar to 0.8.19 ([5708118](https://github.com/RyuuGan/sol-merger/commit/5708118b001a961bd817c1375611029dec4145b4))
+
+
+
+# [4.2.0](https://github.com/RyuuGan/sol-merger/compare/v4.1.1...v4.2.0) (2023-02-04)
+
+
+### Features
+
+* **grammar:** update to new grammar 0.8.18 ([7a454c7](https://github.com/RyuuGan/sol-merger/commit/7a454c7497c0fc575a537499a74cad62091097b3))
+
+
+### Reverts
+
+* Revert "chore: add build on prepublishOnly" ([1891c55](https://github.com/RyuuGan/sol-merger/commit/1891c550f5596c73290dc5950d715fafc91b8927))
+
+
+
 ## [4.1.1](https://github.com/RyuuGan/sol-merger/compare/v4.1.0...v4.1.1) (2022-04-03)
 
 
