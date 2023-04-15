@@ -1,3 +1,12 @@
+# [4.4.0](https://github.com/RyuuGan/sol-merger/compare/v4.3.0...v4.4.0) (2023-04-15)
+
+
+### Features
+
+* **sol-merger:** add support for additional roots for resolving contracts ([a4447fa](https://github.com/RyuuGan/sol-merger/commit/a4447fa69b097ee79af985f25f0a4c7fbffad720))
+
+
+
 # [4.3.0](https://github.com/RyuuGan/sol-merger/compare/v4.2.0...v4.3.0) (2023-02-24)
 
 
