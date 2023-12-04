@@ -22,6 +22,7 @@ sourceUnit: (
 	| enumDefinition
 	| userDefinedValueTypeDefinition
 	| errorDefinition
+	| eventDefinition
 )* EOF;
 
 //@doc: inline
@@ -152,7 +153,7 @@ stateMutability: Pure | View | Payable;
  */
 overrideSpecifier: Override (LParen overrides+=identifierPath (Comma overrides+=identifierPath)* RParen)?;
 /**
- * The definition of contract, library and interface functions.
+ * The definition of contract, library, interface or free functions.
  * Depending on the context in which the function is defined, further restrictions may apply,
  * e.g. functions in interfaces have to be unimplemented, i.e. may not contain a body block.
  */
@@ -161,7 +162,7 @@ locals[
 	boolean visibilitySet = false,
 	boolean mutabilitySet = false,
 	boolean virtualSet = false,
-	boolean overrideSpecifierSet = false
+	boolean overrideSpecifierSet = false,
 ]
 :
 	Function (identifier | Fallback | Receive)
@@ -175,6 +176,7 @@ locals[
 	 )*
 	(Returns LParen returnParameters=parameterList RParen)?
 	(Semicolon | body=block);
+
 /**
  * The definition of a modifier.
  * Note that within the body block of a modifier, the underscore cannot be used as identifier,
@@ -367,7 +369,7 @@ dataLocation: Memory | Storage | Calldata;
  */
 expression:
 	expression LBrack index=expression? RBrack # IndexAccess
-	| expression LBrack start=expression? Colon end=expression? RBrack # IndexRangeAccess
+	| expression LBrack startIndex=expression? Colon endIndex=expression? RBrack # IndexRangeAccess
 	| expression Period (identifier | Address) # MemberAccess
 	| expression LBrace (namedArgument (Comma namedArgument)*)? RBrace # FunctionCallOptions
 	| expression callArgumentList # FunctionCall
@@ -388,12 +390,13 @@ expression:
 	| expression Or expression # OrOperation
 	|<assoc=right> expression Conditional expression Colon expression # Conditional
 	|<assoc=right> expression assignOp expression # Assignment
-	| New typeName # NewExpression
+	| New typeName # NewExpr
 	| tupleExpression # Tuple
 	| inlineArrayExpression # InlineArray
  	| (
 		identifier
 		| literal
+		| literalWithSubDenomination
 		| elementaryTypeName[false]
 	  ) # PrimaryExpression
 ;
@@ -412,6 +415,9 @@ inlineArrayExpression: LBrack (expression ( Comma expression)* ) RBrack;
 identifier: Identifier | From | Error | Revert | Global;
 
 literal: stringLiteral | numberLiteral | booleanLiteral | hexStringLiteral | unicodeStringLiteral;
+
+literalWithSubDenomination: numberLiteral SubDenomination;
+
 booleanLiteral: True | False;
 /**
  * A full string literal consists of either one or several consecutive quoted strings.
@@ -429,7 +435,8 @@ unicodeStringLiteral: UnicodeStringLiteral+;
 /**
  * Number literals can be decimal or hexadecimal numbers with an optional unit.
  */
-numberLiteral: (DecimalNumber | HexNumber) NumberUnit?;
+numberLiteral: DecimalNumber | HexNumber;
+
 /**
  * A curly-braced block of statements. Opens its own scope.
  */
