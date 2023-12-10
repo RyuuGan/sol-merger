@@ -1,6 +1,6 @@
 {
   "name": "sol-merger",
-  "version": "4.4.0",
+  "version": "4.4.1",
   "description": "Merges all import files into single file.",
   "main": "./dist/lib/index.js",
   "types": "./dist/lib/index.d.ts",
@@ -64,13 +64,13 @@
     "chai": "^4.3.6",
     "mocha": "^10.2.0",
     "npm-cli-adduser": "1.1.4",
-    "openzeppelin-solidity": "^2.3.0",
+    "openzeppelin-solidity": "2.3.0",
     "rimraf": "^3.0.2",
     "ts-node": "^10.9.1",
     "tslib": "^2.5.0",
     "tslint": "^6.1.3",
     "typescript": "^5.0.2",
-    "verdaccio": "5.22.1",
+    "verdaccio": "5.27.1",
     "zeppelin-solidity": "^1.12.0"
   }
 }

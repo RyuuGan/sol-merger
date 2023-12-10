@@ -25,7 +25,7 @@ import { AndOperationContext } from "./SolidityParser";
 import { OrOperationContext } from "./SolidityParser";
 import { ConditionalContext } from "./SolidityParser";
 import { AssignmentContext } from "./SolidityParser";
-import { NewExpressionContext } from "./SolidityParser";
+import { NewExprContext } from "./SolidityParser";
 import { TupleContext } from "./SolidityParser";
 import { InlineArrayContext } from "./SolidityParser";
 import { PrimaryExpressionContext } from "./SolidityParser";
@@ -78,6 +78,7 @@ import { TupleExpressionContext } from "./SolidityParser";
 import { InlineArrayExpressionContext } from "./SolidityParser";
 import { IdentifierContext } from "./SolidityParser";
 import { LiteralContext } from "./SolidityParser";
+import { LiteralWithSubDenominationContext } from "./SolidityParser";
 import { BooleanLiteralContext } from "./SolidityParser";
 import { StringLiteralContext } from "./SolidityParser";
 import { HexStringLiteralContext } from "./SolidityParser";
@@ -307,12 +308,12 @@ export interface SolidityParserVisitor<Result> extends ParseTreeVisitor<Result> 
 	visitAssignment?: (ctx: AssignmentContext) => Result;
 
 	/**
-	 * Visit a parse tree produced by the `NewExpression`
+	 * Visit a parse tree produced by the `NewExpr`
 	 * labeled alternative in `SolidityParser.expression`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	visitNewExpression?: (ctx: NewExpressionContext) => Result;
+	visitNewExpr?: (ctx: NewExprContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by the `Tuple`
@@ -680,6 +681,13 @@ export interface SolidityParserVisitor<Result> extends ParseTreeVisitor<Result> 
 	 * @return the visitor result
 	 */
 	visitLiteral?: (ctx: LiteralContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `SolidityParser.literalWithSubDenomination`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitLiteralWithSubDenomination?: (ctx: LiteralWithSubDenominationContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `SolidityParser.booleanLiteral`.

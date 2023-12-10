@@ -1,3 +1,12 @@
+## [4.4.1](https://github.com/RyuuGan/sol-merger/compare/v4.4.0...v4.4.1) (2023-12-10)
+
+
+### Bug Fixes
+
+* **exports:** fix calculating export is clause for the contacts ([acc581e](https://github.com/RyuuGan/sol-merger/commit/acc581ec9cfbc56ac33cf768b5cfbebcd3d3730e)), closes [#73](https://github.com/RyuuGan/sol-merger/issues/73)
+
+
+
 # [4.4.0](https://github.com/RyuuGan/sol-merger/compare/v4.3.0...v4.4.0) (2023-04-15)
 
 

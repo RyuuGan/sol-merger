@@ -51,7 +51,7 @@ export interface ExportsAnalyzerResultUsingDirective {
 }
 
 export class ExportsAnalyzer {
-  constructor(private contents: string) {}
+  constructor(private contents: string) { }
 
   /**
    * Analyzes all the exports of the file (Contract, Interface, Library)
@@ -97,7 +97,7 @@ export class ExportsAnalyzer {
           name: e.name,
           body: this.contents.substring(e.body.start, e.body.end + 1).trim(),
           is: e.is
-            ? this.contents.substring(e.is.start, e.is.end + 1).trimLeft()
+            ? this.contents.substring(e.is.start, e.is.end).trimLeft() + ' '
             : '',
         });
       });

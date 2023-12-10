@@ -25,7 +25,7 @@ import { AndOperationContext } from "./SolidityParser";
 import { OrOperationContext } from "./SolidityParser";
 import { ConditionalContext } from "./SolidityParser";
 import { AssignmentContext } from "./SolidityParser";
-import { NewExpressionContext } from "./SolidityParser";
+import { NewExprContext } from "./SolidityParser";
 import { TupleContext } from "./SolidityParser";
 import { InlineArrayContext } from "./SolidityParser";
 import { PrimaryExpressionContext } from "./SolidityParser";
@@ -78,6 +78,7 @@ import { TupleExpressionContext } from "./SolidityParser";
 import { InlineArrayExpressionContext } from "./SolidityParser";
 import { IdentifierContext } from "./SolidityParser";
 import { LiteralContext } from "./SolidityParser";
+import { LiteralWithSubDenominationContext } from "./SolidityParser";
 import { BooleanLiteralContext } from "./SolidityParser";
 import { StringLiteralContext } from "./SolidityParser";
 import { HexStringLiteralContext } from "./SolidityParser";
@@ -414,17 +415,17 @@ export interface SolidityParserListener extends ParseTreeListener {
 	exitAssignment?: (ctx: AssignmentContext) => void;
 
 	/**
-	 * Enter a parse tree produced by the `NewExpression`
+	 * Enter a parse tree produced by the `NewExpr`
 	 * labeled alternative in `SolidityParser.expression`.
 	 * @param ctx the parse tree
 	 */
-	enterNewExpression?: (ctx: NewExpressionContext) => void;
+	enterNewExpr?: (ctx: NewExprContext) => void;
 	/**
-	 * Exit a parse tree produced by the `NewExpression`
+	 * Exit a parse tree produced by the `NewExpr`
 	 * labeled alternative in `SolidityParser.expression`.
 	 * @param ctx the parse tree
 	 */
-	exitNewExpression?: (ctx: NewExpressionContext) => void;
+	exitNewExpr?: (ctx: NewExprContext) => void;
 
 	/**
 	 * Enter a parse tree produced by the `Tuple`
@@ -1003,6 +1004,17 @@ export interface SolidityParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitLiteral?: (ctx: LiteralContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `SolidityParser.literalWithSubDenomination`.
+	 * @param ctx the parse tree
+	 */
+	enterLiteralWithSubDenomination?: (ctx: LiteralWithSubDenominationContext) => void;
+	/**
+	 * Exit a parse tree produced by `SolidityParser.literalWithSubDenomination`.
+	 * @param ctx the parse tree
+	 */
+	exitLiteralWithSubDenomination?: (ctx: LiteralWithSubDenominationContext) => void;
 
 	/**
 	 * Enter a parse tree produced by `SolidityParser.booleanLiteral`.
