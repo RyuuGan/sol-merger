@@ -159,4 +159,8 @@ describe('Solidity Merger', () => {
       assert.isOk(e);
     }
   });
+
+  it('should compile file without extra spaces before bracket in contract defininition', async () => {
+    await testFile('ContractWithoutSpaceBeforeBracket');
+  });
 });
