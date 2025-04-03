@@ -1,4 +1,4 @@
-import colors from 'cli-color';
+import colors from 'picocolors';
 import Debug from 'debug';
 
 const log = Debug('sol-merger:log');
