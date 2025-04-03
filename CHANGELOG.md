@@ -1,3 +1,7 @@
+## [4.4.2](https://github.com/RyuuGan/sol-merger/compare/v4.4.1...v4.4.2) (2025-04-03)
+
+
+
 ## [4.4.1](https://github.com/RyuuGan/sol-merger/compare/v4.4.0...v4.4.1) (2023-12-10)
 
 
