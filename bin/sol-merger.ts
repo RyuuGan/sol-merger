@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import colors from 'cli-color';
+import colors from 'picocolors';
 import program from 'commander';
 import Debug from 'debug';
 import fs from 'fs-extra';
